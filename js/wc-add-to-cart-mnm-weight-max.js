@@ -72,12 +72,16 @@
 			if( typeof total_weight === 'undefined' ){
 				total_weight = 0;
 			}
+			var min_weight = container.$mnm_cart.data( 'min_weight' );
 			var max_weight = container.$mnm_cart.data( 'max_weight' );
 
-
-			// If total weight is more than max weight.
+			// Check if the total weight is within the required threshold, if not error.
 			if( total_weight > max_weight ) {
 				var message = wc_mnm_weight_params.i18n_max_weight_error.replace( '%max', self.get_formatted_weight( max_weight ) );
+				message = message.replace( '%difference', self.get_formatted_weight( total_weight - max_weight ) );
+				container.add_message( message, 'error' );
+			} else if (total_weight < min_weight) {
+				var message = wc_mnm_weight_params.i18n_min_weight_error.replace( '%difference', self.get_formatted_weight( min_weight - total_weight ) );
 				container.add_message( message, 'error' );
 			}
 		};
