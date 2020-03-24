@@ -279,9 +279,9 @@ class WC_MNM_Weight {
 		if( self::validate_by_weight( $product ) ) {
 
 			$new_params = array(
-			    'min_weight'            => $product->get_meta( '_mnm_min_container_weight', true, 'edit' ),
-				'max_weight'			=> $product->get_meta( '_mnm_max_container_weight', true, 'edit' ),
 				'validation_mode'       => $product->get_meta( '_mnm_validation_mode', true ),
+			    'min_weight'            => $product->get_meta( '_mnm_min_container_weight', true ),
+				'max_weight'			=> $product->get_meta( '_mnm_max_container_weight', true ),
 				'weight_unit' 			=> get_option( 'woocommerce_weight_unit' )
 			);
 
