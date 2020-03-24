@@ -14,8 +14,7 @@
 		 */
 
 		this.initialize = function() {
-			
-			if( container.$mnm_cart.data( 'max_weight' ) !== 'undefined' ) {
+			if( 'weight' === container.$mnm_cart.data( 'validation_mode' ) ) {
 				this.add_error_div();	
 				this.bind_event_handlers();		
 			}
@@ -75,6 +74,7 @@
 			if( typeof total_weight === 'undefined' ){
 				total_weight = 0;
 			}
+
 			var min_weight = container.$mnm_cart.data( 'min_weight' );
 			var max_weight = container.$mnm_cart.data( 'max_weight' );
 
@@ -87,6 +87,7 @@
 				var message = wc_mnm_weight_params.i18n_min_weight_error.replace( '%difference', self.get_formatted_weight( min_weight - total_weight ) );
 				container.add_message( message, 'error' );
 			}
+
 		};
 
 		/**

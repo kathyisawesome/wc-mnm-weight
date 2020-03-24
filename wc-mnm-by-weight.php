@@ -212,7 +212,8 @@ class WC_MNM_Weight {
 	 * @param obj WC_Mix_and_Match $product the parent container
 	 */
 	public static function weight_validation( $valid, $mnm_stock, $product ) {
-			
+
+		if( self::validate_by_weight( $product ) ) {		
 
 			$managed_items = $mnm_stock->get_managed_items();
 
@@ -228,14 +229,18 @@ class WC_MNM_Weight {
 			if ( $total_weight < $product->get_meta( '_mnm_min_container_weight' ) ) {
 				$error_message = sprintf( __( 'You &quot;%s&quot; is too light.', 'wc-mnm-min-weight' ), $product->get_title() );
 				wc_add_notice( $error_message, 'error' );
-				return false;
+				$valid = false;
 			} elseif ( $total_weight > $product->get_meta( '_mnm_max_container_weight' ) ) {
 				$error_message = sprintf( __( 'You &quot;%s&quot; is too heavy.', 'wc-mnm-max-weight' ), $product->get_title() );
 				wc_add_notice( $error_message, 'error' );
-				return false;
+				$valid = false;
 			}
 
-			return true;
+			$valid = true;
+
+		}
+
+		return $valid;
 	}
 
 	/*-----------------------------------------------------------------------------------*/
@@ -271,11 +276,12 @@ class WC_MNM_Weight {
 	 */
 	public static function add_data_attributes( $params, $product ) {
 
-		if( $product->get_meta( '_mnm_max_container_weight' ) ) {
+		if( self::validate_by_weight( $product ) ) {
 
 			$new_params = array(
 			    'min_weight'            => $product->get_meta( '_mnm_min_container_weight', true, 'edit' ),
 				'max_weight'			=> $product->get_meta( '_mnm_max_container_weight', true, 'edit' ),
+				'validation_mode'       => $product->get_meta( '_mnm_validation_mode', true ),
 				'weight_unit' 			=> get_option( 'woocommerce_weight_unit' )
 			);
 
@@ -294,6 +300,19 @@ class WC_MNM_Weight {
 	 */
 	public static function load_scripts(){
 		wp_enqueue_script( 'wc-add-to-cart-mnm-weight-max' );
+	}
+
+	/*-----------------------------------------------------------------------------------*/
+	/* Helpers                                                                           */
+	/*-----------------------------------------------------------------------------------*/
+
+	/**
+	 * Does this product validate by weight.
+	 * @param  WC_Product
+	 * @return bool
+	 */
+	public static function validate_by_weight( $product ) {
+		return 'weight' === $product->get_meta( '_mnm_validation_mode', true );
 	}
 
 
