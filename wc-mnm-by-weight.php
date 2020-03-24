@@ -92,6 +92,19 @@ class WC_MNM_Weight {
 	 */
 	public static function container_weight_size_options( $post_id, $mnm_product_object ) {
 
+		woocommerce_wp_radio( 
+			array(
+				'id'      => '_mnm_validation_mode',
+				'class'   => 'select short mnm_validation_mode',
+				'label'   => __( 'Validation mode', 'wc-mnm-weight' ),
+				'value'	  => $mnm_product_object->get_meta( '_mnm_validation_mode' ) === 'weight' ? 'weight' : '',
+				'options' => array( 
+					''       => __( 'Use default', 'wc-mnm-weight' ),
+					'weight' => __( 'Validate by weight', 'wc-mnm-weight' )
+				)
+			)
+		);
+
 		woocommerce_wp_text_input( array(
 			'id'            => '_mnm_min_container_weight',
 			'label'       => __( 'Min Container Weight', 'wc-mnm-min-weight' ) . ' (' . get_option( 'woocommerce_weight_unit' ) . ')',
@@ -116,6 +129,29 @@ class WC_MNM_Weight {
 			'wrapper_class' => 'show_if_validate_by_weight'
 		) );
 
+		?>
+		<script>
+			jQuery( document ).ready( function( $ ) {
+
+				$( "#mnm_product_data input.mnm_validation_mode" ).change( function() {
+					if( $( this ).val() === 'weight' ) {
+						$( "#mnm_product_data .mnm_container_size_options" ).hide();
+						$( "#mnm_product_data .show_if_validate_by_weight" ).show();
+					} else {
+						$( "#mnm_product_data .mnm_container_size_options" ).show();
+						$( "#mnm_product_data .show_if_validate_by_weight" ).hide();
+					}
+
+				} );
+
+				$( "#mnm_product_data input.mnm_validation_mode:checked" ).change();
+
+			} );
+
+		</script>
+
+		<?php
+
 	}
 
 	/**
@@ -124,12 +160,23 @@ class WC_MNM_Weight {
 	 * @param  WC_Product_Mix_and_Match  $mnm_product_object
 	 */
 	public static function process_meta( $product ) {
+		if( ! empty( $_POST[ '_mnm_validation_mode' ] ) && 'weight' === $_POST[ '_mnm_validation_mode' ] ) {
+			$product->update_meta_data( '_mnm_validation_mode', 'weight' );
+		} else {
+			$product->delete_meta_data( '_mnm_validation_mode' );
+		}
+
 		if( ! empty( $_POST[ '_mnm_max_container_weight' ] ) ) {
 			$product->update_meta_data( '_mnm_max_container_weight', wc_clean( wp_unslash( $_POST[ '_mnm_max_container_weight' ] ) ) );
+		} else {
+			$product->delete_meta_data( '_mnm_max_container_weight' );
 		}
+
 		if( ! empty( $_POST[ '_mnm_min_container_weight' ] ) ) {
 			$product->update_meta_data( '_mnm_min_container_weight', wc_clean( wp_unslash( $_POST[ '_mnm_min_container_weight' ] ) ) );
-		}		
+		}	else {
+			$product->delete_meta_data( '_mnm_min_container_weight' );
+		}	
 	}
 
 
