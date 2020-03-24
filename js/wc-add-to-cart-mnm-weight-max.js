@@ -7,6 +7,7 @@
 
 		var self       = this;
 		this.container = container;
+		this.$form     = container.$mnm_form;
 
 		/**
 		 * Init.
@@ -37,8 +38,8 @@
 		 * Container-Level Event Handlers.
 		 */
 		this.bind_event_handlers = function() {
-			$( '.mnm_form' ).on( 'wc-mnm-updated-totals', this.update_totals );
-			$( '.mnm_form' ).on( 'wc-mnm-validation',     this.validate );
+			this.$form.on( 'wc-mnm-updated-totals', this.update_totals );
+			this.$form.on( 'wc-mnm-validation',     this.validate );
 		};
 
 		/**
@@ -123,7 +124,7 @@
 	/*  Initialization.                                                */
 	/*-----------------------------------------------------------------*/
 
-	$( '.mnm_form' ).on( 'wc-mnm-initializing', function( e, container ) {
+	$( 'body' ).on( 'wc-mnm-initializing', function( e, container ) {
 		var weight = new WC_MNM_Weight( container );
 		weight.initialize();
 	});
