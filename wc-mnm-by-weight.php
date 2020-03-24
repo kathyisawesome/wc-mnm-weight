@@ -254,7 +254,7 @@ class WC_MNM_Weight {
 	 */
 	public static function register_scripts() {
 
-		wp_register_script( 'wc-add-to-cart-mnm-weight-max', plugins_url( 'js/wc-add-to-cart-mnm-weight-max.js', __FILE__ ), array( 'wc-add-to-cart-mnm' ), WC_MNM_Weight::VERSION, true );
+		wp_register_script( 'wc-add-to-cart-mnm-weight-validation', plugins_url( 'js/wc-add-to-cart-mnm-weight-validation.js', __FILE__ ), array( 'wc-add-to-cart-mnm' ), self::VERSION, true );
 
 		$params = array(
 		    'i18n_min_weight_error' => __( 'You need to select another %difference worth of product&hellip;', 'wc-mnm-weight' ),
@@ -263,7 +263,7 @@ class WC_MNM_Weight {
 			'i18n_total'            => __( 'Total Weight: ', 'wc-mnm-weight' )
 		);
 
-		wp_localize_script( 'wc-add-to-cart-mnm-weight-max', 'wc_mnm_weight_params', $params );
+		wp_localize_script( 'wc-add-to-cart-mnm-weight-validation', 'wc_mnm_weight_params', $params );
 
 	}
 
@@ -299,7 +299,7 @@ class WC_MNM_Weight {
 	 * @return void
 	 */
 	public static function load_scripts(){
-		wp_enqueue_script( 'wc-add-to-cart-mnm-weight-max' );
+		wp_enqueue_script( 'wc-add-to-cart-mnm-weight-validation' );
 	}
 
 	/*-----------------------------------------------------------------------------------*/
