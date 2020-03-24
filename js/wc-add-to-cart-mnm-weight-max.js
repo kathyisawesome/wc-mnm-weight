@@ -16,8 +16,8 @@
 		this.initialize = function() {
 			
 			if( container.$mnm_cart.data( 'max_weight' ) !== 'undefined' ) {
-				this.bind_event_handlers();
-				this.add_error_div();			
+				this.add_error_div();	
+				this.bind_event_handlers();		
 			}
 
 		};
@@ -25,13 +25,12 @@
 		/**
 		 * Add error div.
 		 */
-		this.add_error_div = function( container ) {
-			// Add a div to hold the error message.
-			var $error = this.container.$mnm_cart.find( '.wc-mnm-weight-counter' );
-
-			if ( ! $error.length ){
+		this.add_error_div = function() {
+			if ( ! this.container.$mnm_cart.find( '.wc-mnm-weight-counter' ).length ){
 				$('<div class="wc-mnm-weight-counter"></div>').insertBefore( this.container.$mnm_price );
 			}
+
+			this.$counter  = this.container.$mnm_cart.find( '.wc-mnm-weight-counter' );
 		};
 
 		/**
@@ -62,7 +61,7 @@
 			} );
 
 			container.$mnm_cart.data( 'total_weight', total_weight );
-			container.$mnm_cart.find( '.wc-mnm-weight-counter' ).html( self.get_weight_html( true ) );
+			self.$counter.html( self.get_weight_html( true ) );
 		};
 
 		/**
