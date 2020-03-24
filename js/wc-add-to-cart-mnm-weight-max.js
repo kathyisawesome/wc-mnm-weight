@@ -49,11 +49,14 @@
 
 			$.each( container.child_items, function( index, child_item ) {
 
-				item_weight = parseFloat( child_item.$self.find( '.product-weight' ).data( 'weight' ) );
+				item_weight = child_item.$self.find( '.product-weight' ).data( 'weight' );
 
-				if( typeof( item_weight ) === 'undefined' ) {
+				if( 'undefined' === typeof item_weight ) { 
 					item_weight = 0;
 				}
+
+				item_weight = parseFloat( item_weight );
+
 				total_weight += child_item.get_quantity() * item_weight;
 			} );
 
