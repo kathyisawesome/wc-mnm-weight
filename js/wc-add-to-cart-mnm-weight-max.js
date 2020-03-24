@@ -36,7 +36,7 @@
 		 * Container-Level Event Handlers.
 		 */
 		this.bind_event_handlers = function() {
-			this.$form.on( 'wc-mnm-updated-totals', this.update_totals );
+			this.$form.on( 'wc-mnm-container-quantities-updated', this.update_totals );
 			this.$form.on( 'wc-mnm-validation',     this.validate );
 		};
 
