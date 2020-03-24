@@ -2,16 +2,16 @@
 /**
  * Plugin Name: WooCommerce Mix and Match: By Weight
  * Plugin URI: http://www.woocommerce.com/products/woocommerce-mix-and-match-products/
- * Description: Validate container by weight
  * Version: 1.0.0
+ * Description: Validate container by weight, requires MNM 1.9.0
  * Author: Kathy Darling
  * Author URI: http://kathyisawesome.com/
- * Developer: Kathy Darling, Manos Psychogyiopoulos
+ * Developer: Kathy Darling
  * Developer URI: http://kathyisawesome.com/
  * Text Domain: wc-mnm-weight
  * Domain Path: /languages
  *
- * Copyright: © 2018 Kathy Darling and Manos Psychogyiopoulos
+ * Copyright: © 2020 Kathy Darling
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
  */
