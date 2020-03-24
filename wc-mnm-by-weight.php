@@ -60,7 +60,7 @@ class WC_MNM_Weight {
 		add_action( 'wc_quick_view_enqueue_scripts', array( __CLASS__, 'load_scripts' ) );
 
 		// Add to cart validation.
-		add_filter( 'woocommerce_mnm_add_to_cart_validation', array( __CLASS__, 'weight_validation' ) );
+		add_filter( 'woocommerce_mnm_add_to_cart_container_validation', array( __CLASS__, 'weight_validation' ), 10, 3 );
 
     }
 
@@ -143,10 +143,12 @@ class WC_MNM_Weight {
 	/**
 	 * Server-side weight validation
 	 * 
-	 * @param obj $mnm_item WC_Product of child item
-	 * @param obj WC_Mix_and_Match $product the parent container
+	 * @param bool $is_valid
+	 * @param obj WC_Product_Mix_and_Match $product
+	 * @param obj WC_Mix_and_Match_Stock_Manager $mnm_stock
+	 * @return  bool 
 	 */
-	public static function weight_validation( $valid, $mnm_stock, $product ) {
+	public static function weight_validation( $valid, $product, $mnm_stock ) {
 
 			$managed_items = $mnm_stock->get_managed_items();
 
