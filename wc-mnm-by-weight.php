@@ -109,7 +109,7 @@ class WC_MNM_Weight {
 	 * @param  WC_Product_Mix_and_Match  $mnm_product_object
 	 */
 	public static function process_meta( $product ) {
-		if( ! empty( $_POST[ '_mnm_max_container_weight' ] ) ) {
+		if ( $product->is_type( 'mix-and-match' ) && ! empty( $_POST[ '_mnm_max_container_weight' ] ) ) {
 			$product->update_meta_data( '_mnm_max_container_weight', wc_clean( wp_unslash( $_POST[ '_mnm_max_container_weight' ] ) ) );
 		}
 	}
