@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WooCommerce Mix and Match: By Weight
  * Plugin URI: http://www.woocommerce.com/products/woocommerce-mix-and-match-products/
- * Version: 1.0.0
+ * Version: 1.1.0
  * Description: Validate container by weight, requires MNM 1.9.0
  * Author: Kathy Darling
  * Author URI: http://kathyisawesome.com/
@@ -28,8 +28,8 @@ class WC_MNM_Weight {
 	/**
 	 * constants
 	 */
-	CONST VERSION = '1.0.0';
-	CONST REQUIRED_WOO = '3.3.0';
+	CONST VERSION = '1.1.0';
+	CONST REQUIRED_WOO = '4.0.0';
 
 	/**
 	 * WC_MNM_Weight Constructor
@@ -91,6 +91,32 @@ class WC_MNM_Weight {
 	 * @param  WC_Product_Mix_and_Match  $mnm_product_object
 	 */
 	public static function container_weight_size_options( $post_id, $mnm_product_object ) {
+
+		woocommerce_wp_radio( 
+			array(
+				'id'      => '_mnm_validation_mode',
+				'class'   => 'select short mnm_validation_mode',
+				'label'   => __( 'Validation mode', 'wc-mnm-weight' ),
+				'value'	  => $mnm_product_object->get_meta( '_mnm_validation_mode' ) === 'weight' ? 'weight' : '',
+				'options' => array( 
+					''       => __( 'Use default', 'wc-mnm-weight' ),
+					'weight' => __( 'Validate by weight', 'wc-mnm-weight' )
+				)
+			)
+		);
+
+		woocommerce_wp_text_input( array(
+			'id'            => '_mnm_min_container_weight',
+			'label'       => __( 'Min Container Weight', 'wc-mnm-min-weight' ) . ' (' . get_option( 'woocommerce_weight_unit' ) . ')',
+			'desc_tip'    => true,
+			'description' => __( 'Min weight of containers in decimal form', 'woocommerce' ),
+			'type'        => 'text',
+			'data_type'   => 'decimal',
+			'value'			=> $mnm_product_object->get_meta( '_mnm_min_container_weight', true, 'edit' ),
+			'desc_tip'      => true,
+			'wrapper_class' => 'show_if_validate_by_weight'
+		) );
+
 		woocommerce_wp_text_input( array(
 			'id'            => '_mnm_max_container_weight',
 			'label'       => __( 'Max Container Weight', 'wc-mnm-max-weight' ) . ' (' . get_option( 'woocommerce_weight_unit' ) . ')',
@@ -99,8 +125,33 @@ class WC_MNM_Weight {
 			'type'        => 'text',
 			'data_type'   => 'decimal',
 			'value'			=> $mnm_product_object->get_meta( '_mnm_max_container_weight', true, 'edit' ),
-			'desc_tip'      => true
+			'desc_tip'      => true,
+			'wrapper_class' => 'show_if_validate_by_weight'
 		) );
+
+		?>
+		<script>
+			jQuery( document ).ready( function( $ ) {
+
+				$( "#mnm_product_data input.mnm_validation_mode" ).change( function() {
+					if( $( this ).val() === 'weight' ) {
+						$( "#mnm_product_data .mnm_container_size_options" ).hide();
+						$( "#mnm_product_data .show_if_validate_by_weight" ).show();
+					} else {
+						$( "#mnm_product_data .mnm_container_size_options" ).show();
+						$( "#mnm_product_data .show_if_validate_by_weight" ).hide();
+					}
+
+				} );
+
+				$( "#mnm_product_data input.mnm_validation_mode:checked" ).change();
+
+			} );
+
+		</script>
+
+		<?php
+
 	}
 
 	/**
@@ -109,9 +160,29 @@ class WC_MNM_Weight {
 	 * @param  WC_Product_Mix_and_Match  $mnm_product_object
 	 */
 	public static function process_meta( $product ) {
-		if ( $product->is_type( 'mix-and-match' ) && ! empty( $_POST[ '_mnm_max_container_weight' ] ) ) {
-			$product->update_meta_data( '_mnm_max_container_weight', wc_clean( wp_unslash( $_POST[ '_mnm_max_container_weight' ] ) ) );
+
+		if ( $product->is_type( 'mix-and-match' ) ) {
+
+			if( ! empty( $_POST[ '_mnm_validation_mode' ] ) && 'weight' === $_POST[ '_mnm_validation_mode' ] ) {
+				$product->update_meta_data( '_mnm_validation_mode', 'weight' );
+			} else {
+				$product->delete_meta_data( '_mnm_validation_mode' );
+			}
+
+			if( ! empty( $_POST[ '_mnm_max_container_weight' ] ) ) {
+				$product->update_meta_data( '_mnm_max_container_weight', wc_clean( wp_unslash( $_POST[ '_mnm_max_container_weight' ] ) ) );
+			} else {
+				$product->delete_meta_data( '_mnm_max_container_weight' );
+			}
+
+			if( ! empty( $_POST[ '_mnm_min_container_weight' ] ) ) {
+				$product->update_meta_data( '_mnm_min_container_weight', wc_clean( wp_unslash( $_POST[ '_mnm_min_container_weight' ] ) ) );
+			}	else {
+				$product->delete_meta_data( '_mnm_min_container_weight' );
+			}
+
 		}
+
 	}
 
 
@@ -150,6 +221,8 @@ class WC_MNM_Weight {
 	 */
 	public static function weight_validation( $valid, $product, $mnm_stock ) {
 
+		if( self::validate_by_weight( $product ) ) {		
+
 			$managed_items = $mnm_stock->get_managed_items();
 
 			$total_weight = 0;
@@ -161,13 +234,21 @@ class WC_MNM_Weight {
 			}
 
 			// Validate the total weight.
-			if ( $total_weight > $product->get_meta( '_mnm_max_container_weight' ) ) {
+			if ( $total_weight < $product->get_meta( '_mnm_min_container_weight' ) ) {
+				$error_message = sprintf( __( 'You &quot;%s&quot; is too light.', 'wc-mnm-min-weight' ), $product->get_title() );
+				wc_add_notice( $error_message, 'error' );
+				$valid = false;
+			} elseif ( $total_weight > $product->get_meta( '_mnm_max_container_weight' ) ) {
 				$error_message = sprintf( __( 'You &quot;%s&quot; is too heavy.', 'wc-mnm-max-weight' ), $product->get_title() );
 				wc_add_notice( $error_message, 'error' );
-				return false;
+				$valid = false;
 			}
 
-			return true;
+			$valid = true;
+
+		}
+
+		return $valid;
 	}
 
 	/*-----------------------------------------------------------------------------------*/
@@ -181,15 +262,16 @@ class WC_MNM_Weight {
 	 */
 	public static function register_scripts() {
 
-		wp_register_script( 'wc-add-to-cart-mnm-weight-max', plugins_url( 'js/wc-add-to-cart-mnm-weight-max.js', __FILE__ ), array( 'wc-add-to-cart-mnm' ), WC_MNM_Weight::VERSION, true );
+		wp_register_script( 'wc-add-to-cart-mnm-weight-validation', plugins_url( 'js/wc-add-to-cart-mnm-weight-validation.js', __FILE__ ), array( 'wc-add-to-cart-mnm' ), self::VERSION, true );
 
 		$params = array(
-			'i18n_max_weight_error' => __( 'Your configuration is too heavy. Please choose less than %max to continue&hellip;', 'wc-mnm-weight' ),
+		    'i18n_min_weight_error' => __( 'You need to select another %difference worth of product&hellip;', 'wc-mnm-weight' ),
+			'i18n_max_weight_error' => __( 'Your selections are too heavy, please remove %difference worth of product to continue (%max max)&hellip;', 'wc-mnm-weight' ),
 			'i18n_weight_format'    => sprintf( _x( '%1$s%2$s%3$s', '"Total Weight" string followed by weight followed by weight unit', 'woocommerce-mix-and-match-products' ), '%t', '%w', '%u' ),
 			'i18n_total'            => __( 'Total Weight: ', 'wc-mnm-weight' )
 		);
 
-		wp_localize_script( 'wc-add-to-cart-mnm-weight-max', 'wc_mnm_weight_params', $params );
+		wp_localize_script( 'wc-add-to-cart-mnm-weight-validation', 'wc_mnm_weight_params', $params );
 
 	}
 
@@ -202,10 +284,12 @@ class WC_MNM_Weight {
 	 */
 	public static function add_data_attributes( $params, $product ) {
 
-		if( $product->get_meta( '_mnm_max_container_weight' ) ) {
+		if( self::validate_by_weight( $product ) ) {
 
 			$new_params = array(
-				'max_weight'			=> $product->get_meta( '_mnm_max_container_weight', true, 'edit' ),
+				'validation_mode'       => $product->get_meta( '_mnm_validation_mode', true ),
+			    'min_weight'            => $product->get_meta( '_mnm_min_container_weight', true ),
+				'max_weight'			=> $product->get_meta( '_mnm_max_container_weight', true ),
 				'weight_unit' 			=> get_option( 'woocommerce_weight_unit' )
 			);
 
@@ -223,7 +307,20 @@ class WC_MNM_Weight {
 	 * @return void
 	 */
 	public static function load_scripts(){
-		wp_enqueue_script( 'wc-add-to-cart-mnm-weight-max' );
+		wp_enqueue_script( 'wc-add-to-cart-mnm-weight-validation' );
+	}
+
+	/*-----------------------------------------------------------------------------------*/
+	/* Helpers                                                                           */
+	/*-----------------------------------------------------------------------------------*/
+
+	/**
+	 * Does this product validate by weight.
+	 * @param  WC_Product
+	 * @return bool
+	 */
+	public static function validate_by_weight( $product ) {
+		return 'weight' === $product->get_meta( '_mnm_validation_mode', true );
 	}
 
 

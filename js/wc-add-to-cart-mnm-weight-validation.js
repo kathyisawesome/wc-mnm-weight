@@ -7,16 +7,16 @@
 
 		var self       = this;
 		this.container = container;
+		this.$form     = container.$mnm_form;
 
 		/**
 		 * Init.
 		 */
 
 		this.initialize = function() {
-			
-			if( container.$mnm_cart.data( 'max_weight' ) !== 'undefined' ) {
-				this.bind_event_handlers();
-				this.add_error_div();			
+			if( 'weight' === container.$mnm_cart.data( 'validation_mode' ) ) {
+				this.add_error_div();	
+				this.bind_event_handlers();		
 			}
 
 		};
@@ -24,21 +24,20 @@
 		/**
 		 * Add error div.
 		 */
-		this.add_error_div = function( container ) {
-			// Add a div to hold the error message.
-			var $error = this.container.$mnm_cart.find( '.wc-mnm-weight-counter' );
-
-			if ( ! $error.length ){
+		this.add_error_div = function() {
+			if ( ! this.container.$mnm_cart.find( '.wc-mnm-weight-counter' ).length ){
 				$('<div class="wc-mnm-weight-counter"></div>').insertBefore( this.container.$mnm_price );
 			}
+
+			this.$counter  = this.container.$mnm_cart.find( '.wc-mnm-weight-counter' );
 		};
 
 		/**
 		 * Container-Level Event Handlers.
 		 */
 		this.bind_event_handlers = function() {
-			$( '.mnm_form' ).on( 'wc-mnm-updated-totals', this.update_totals );
-			$( '.mnm_form' ).on( 'wc-mnm-validation',     this.validate );
+			this.$form.on( 'wc-mnm-container-quantities-updated', this.update_totals );
+			this.$form.on( 'wc-mnm-validation',     this.validate );
 		};
 
 		/**
@@ -49,16 +48,19 @@
 
 			$.each( container.child_items, function( index, child_item ) {
 
-				item_weight = parseFloat( child_item.$self.find( '.product-weight' ).data( 'weight' ) );
+				item_weight = child_item.$self.find( '.product-weight' ).data( 'weight' );
 
-				if( typeof( item_weight ) === 'undefined' ) {
+				if( 'undefined' === typeof item_weight ) { 
 					item_weight = 0;
 				}
+
+				item_weight = parseFloat( item_weight );
+
 				total_weight += child_item.get_quantity() * item_weight;
 			} );
 
 			container.$mnm_cart.data( 'total_weight', total_weight );
-			container.$mnm_cart.find( '.wc-mnm-weight-counter' ).html( self.get_weight_html( true ) );
+			self.$counter.html( self.get_weight_html( true ) );
 		};
 
 		/**
@@ -72,14 +74,20 @@
 			if( typeof total_weight === 'undefined' ){
 				total_weight = 0;
 			}
+
+			var min_weight = container.$mnm_cart.data( 'min_weight' );
 			var max_weight = container.$mnm_cart.data( 'max_weight' );
 
-
-			// If total weight is more than max weight.
+			// Check if the total weight is within the required threshold, if not error.
 			if( total_weight > max_weight ) {
 				var message = wc_mnm_weight_params.i18n_max_weight_error.replace( '%max', self.get_formatted_weight( max_weight ) );
+				message = message.replace( '%difference', self.get_formatted_weight( total_weight - max_weight ) );
+				container.add_message( message, 'error' );
+			} else if (total_weight < min_weight) {
+				var message = wc_mnm_weight_params.i18n_min_weight_error.replace( '%difference', self.get_formatted_weight( min_weight - total_weight ) );
 				container.add_message( message, 'error' );
 			}
+
 		};
 
 		/**
@@ -116,7 +124,7 @@
 	/*  Initialization.                                                */
 	/*-----------------------------------------------------------------*/
 
-	$( '.mnm_form' ).on( 'wc-mnm-initializing', function( e, container ) {
+	$( 'body' ).on( 'wc-mnm-initializing', function( e, container ) {
 		var weight = new WC_MNM_Weight( container );
 		weight.initialize();
 	});
