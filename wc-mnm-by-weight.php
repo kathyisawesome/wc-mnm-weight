@@ -91,16 +91,6 @@ class WC_MNM_Weight {
 	 * @param  WC_Product_Mix_and_Match  $mnm_product_object
 	 */
 	public static function container_weight_size_options( $post_id, $mnm_product_object ) {
-		woocommerce_wp_text_input( array(
-			'id'            => '_mnm_max_container_weight',
-			'label'       => __( 'Max Container Weight', 'wc-mnm-max-weight' ) . ' (' . get_option( 'woocommerce_weight_unit' ) . ')',
-			'desc_tip'    => true,
-			'description' => __( 'Maximum weight of containers in decimal form', 'woocommerce' ),
-			'type'        => 'text',
-			'data_type'   => 'decimal',
-			'value'			=> $mnm_product_object->get_meta( '_mnm_max_container_weight', true, 'edit' ),
-			'desc_tip'      => true
-		) );
 
 		woocommerce_wp_text_input( array(
 			'id'            => '_mnm_min_container_weight',
@@ -110,8 +100,22 @@ class WC_MNM_Weight {
 			'type'        => 'text',
 			'data_type'   => 'decimal',
 			'value'			=> $mnm_product_object->get_meta( '_mnm_min_container_weight', true, 'edit' ),
-			'desc_tip'      => true
-		) );		
+			'desc_tip'      => true,
+			'wrapper_class' => 'show_if_validate_by_weight'
+		) );
+
+		woocommerce_wp_text_input( array(
+			'id'            => '_mnm_max_container_weight',
+			'label'       => __( 'Max Container Weight', 'wc-mnm-max-weight' ) . ' (' . get_option( 'woocommerce_weight_unit' ) . ')',
+			'desc_tip'    => true,
+			'description' => __( 'Maximum weight of containers in decimal form', 'woocommerce' ),
+			'type'        => 'text',
+			'data_type'   => 'decimal',
+			'value'			=> $mnm_product_object->get_meta( '_mnm_max_container_weight', true, 'edit' ),
+			'desc_tip'      => true,
+			'wrapper_class' => 'show_if_validate_by_weight'
+		) );
+
 	}
 
 	/**
