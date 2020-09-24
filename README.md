@@ -7,6 +7,8 @@ Experimental mini-extension for [WooCommerce Mix and Match Products](https://woo
 
 ![Screenshot of front end Mix and Match product showing each product's weight and a total running weight](https://user-images.githubusercontent.com/507025/94208955-50091000-fe88-11ea-9965-e04edf4df2f1.png)
 
+Yes, t-shirts aren't the best use case of this... if you've got a better image, please post it in a pull-request! :)
+
 ### Usage
 
 1. [Download the plugin zip](https://github.com/kathyisawesome/wc-mnm-weight/archive/master.zip) from Github by clicking the Code button, then "Download Zip".
