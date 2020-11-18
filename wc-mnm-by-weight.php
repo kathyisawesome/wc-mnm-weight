@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: WooCommerce Mix and Match: By Weight
  * Plugin URI: http://www.woocommerce.com/products/woocommerce-mix-and-match-products/
+ * Plugin Name: WooCommerce Mix and Match - By Weight
  * Version: 1.1.0
  * Description: Validate container by weight, requires MNM 1.9.0
  * Author: Kathy Darling
