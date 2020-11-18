@@ -59,8 +59,10 @@ class WC_MNM_Weight {
 		// QuickView support.
 		add_action( 'wc_quick_view_enqueue_scripts', array( __CLASS__, 'load_scripts' ) );
 
-		// Add to cart validation.
+		// Validation.
 		add_filter( 'woocommerce_mnm_add_to_cart_container_validation', array( __CLASS__, 'weight_validation' ), 10, 3 );
+		add_filter( 'woocommerce_mnm_cart_container_validation', array( __CLASS__, 'weight_validation' ), 10, 3 );
+		add_filter( 'woocommerce_mnm_add_to_order_container_validation', array( __CLASS__, 'weight_validation' ), 10, 3 );
 
     }
 
@@ -323,7 +325,7 @@ class WC_MNM_Weight {
 	 * Load the script anywhere the MNN add to cart button is displayed
 	 * @return void
 	 */
-	public static function load_scripts(){
+	public static function load_scripts() {
 		wp_enqueue_script( 'wc-add-to-cart-mnm-weight-validation' );
 	}
 
