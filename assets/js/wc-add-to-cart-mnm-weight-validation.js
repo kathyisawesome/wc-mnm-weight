@@ -15,16 +15,16 @@
 
 		this.initialize = function() {
 			if( 'weight' === container.$mnm_cart.data( 'validation_mode' ) ) {
-				this.add_error_div();	
+				this.add_counter_div();	
 				this.bind_event_handlers();		
 			}
 
 		};
 
 		/**
-		 * Add error div.
+		 * Add counter div.
 		 */
-		this.add_error_div = function() {
+		this.add_counter_div = function() {
 			if ( ! this.container.$mnm_cart.find( '.wc-mnm-weight-counter' ).length ){
 				$('<div class="wc-mnm-weight-counter"></div>').insertBefore( this.container.$mnm_price );
 			}
@@ -60,7 +60,7 @@
 			} );
 
 			container.$mnm_cart.data( 'total_weight', total_weight );
-			self.$counter.html( self.get_weight_html( true ) );
+
 		};
 
 		/**
@@ -71,21 +71,42 @@
 			container.reset_messages();
 
 			var total_weight = container.$mnm_cart.data( 'total_weight' );
-			if( typeof total_weight === 'undefined' ){
+
+			if( typeof total_weight === 'undefined' ) {
 				total_weight = 0;
 			}
 
 			var min_weight = container.$mnm_cart.data( 'min_weight' );
 			var max_weight = container.$mnm_cart.data( 'max_weight' );
+			var error_message = '';
 
-			// Check if the total weight is within the required threshold, if not error.
-			if( total_weight > max_weight ) {
-				var message = wc_mnm_weight_params.i18n_max_weight_error.replace( '%max', self.get_formatted_weight( max_weight ) );
-				message = message.replace( '%difference', self.get_formatted_weight( total_weight - max_weight ) );
-				container.add_message( message, 'error' );
-			} else if (total_weight < min_weight) {
-				var message = wc_mnm_weight_params.i18n_min_weight_error.replace( '%difference', self.get_formatted_weight( min_weight - total_weight ) );
-				container.add_message( message, 'error' );
+			// Validation.
+			if( min_weight === max_weight && total_weight !== min_weight ) {
+				error_message = wc_mnm_weight_params.i18n_qty_error.replace( '%s', self.get_formatted_weight( min_weight ) );
+			}
+			// Validate a range.
+			else if( max_weight > 0 && min_weight > 0 && ( total_weight < min_weight || total_weight > max_weight ) ) {
+				error_message = wc_mnm_weight_params.i18n_min_max_qty_error.replace( '%max', self.get_formatted_weight( max_weight ) ).replace( '%min', self.get_formatted_weight( min_weight ) );
+			}
+			// Validate that a container has minimum weight.
+			else if( min_weight > 0 && total_weight < min_weight ) {
+				error_message = wc_mnm_weight_params.i18n_min_weight_error.replace( '%min', self.get_formatted_weight( min_weight ) );
+			// Validate that a container has less than the maximum weight.
+			} else if ( max_weight > 0 && total_weight > max_weight ) {
+				error_message = wc_mnm_weight_params.i18n_max_weight_error.replace( '%max', self.get_formatted_weight( max_weight ) );
+			}
+
+			// Add error message.
+			if ( error_message !== '' ) {
+				// "Selected Xunit".
+				var selected_weight_message = self.selected_weight_message( total_weight );
+
+				// Add error message, replacing placeholders with current values.
+				container.add_message( error_message.replace( '%v', selected_weight_message ), 'error' );
+
+			// Add selected qty status message if there are no error messages and infinite container is used.
+			} else if ( container.api.get_max_container_size() === false ) {
+				container.add_message( self.selected_weight_message( total_weight ) );
 			}
 
 		};
@@ -94,28 +115,16 @@
 		 * Build the weight html component.
 		 */
 		this.get_formatted_weight = function( weight ) {
-			var unit  = self.container.$mnm_cart.data( 'weight_unit' );
-			return wc_mnm_weight_params.i18n_weight_format.replace( '%t', '' ).replace( '%w', wc_mnm_number_format( weight ) ).replace( '%u', unit );
+			var unit             = wc_mnm_weight_params.weight_unit;
+			return wc_mnm_weight_params.i18n_weight_format.replace( '%w', parseFloat( weight ) ).replace( '%u', unit );
 		};
 
 
 		/**
-		 * Build the weight html component.
+		 * Selected total message builder.
 		 */
-		this.get_weight_html = function( show_total ) {
-
-			if( typeof( show_total ) === 'undefined' ) {
-				show_total = false;
-			}
-
-			var	weight_html  = '',
-				total_string = show_total ? '<span class="total">' + wc_mnm_weight_params.i18n_total + '</span>' : '',
-				formatted_weight = self.get_formatted_weight( container.$mnm_cart.data( 'total_weight' ) );
-
-			weight_html = wc_mnm_weight_params.i18n_weight_format.replace( '%t', total_string ).replace( '%w', formatted_weight ).replace( '%u', '' );
-			weight_html = '<p class="weight">' + weight_html + '</p>';
-
-			return weight_html;
+		this.selected_weight_message = function( qty ) {
+			return wc_mnm_weight_params.i18n_qty_message.replace( '%s', self.get_formatted_weight( qty ) );
 		};
 
 	} // End WC_MNM_Weight.

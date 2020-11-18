@@ -262,13 +262,31 @@ class WC_MNM_Weight {
 	 */
 	public static function register_scripts() {
 
-		wp_register_script( 'wc-add-to-cart-mnm-weight-validation', plugins_url( 'js/wc-add-to-cart-mnm-weight-validation.js', __FILE__ ), array( 'wc-add-to-cart-mnm' ), self::VERSION, true );
+		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
+
+		wp_register_script( 'wc-add-to-cart-mnm-weight-validation', plugins_url( '/assets/js/wc-add-to-cart-mnm-weight-validation' .  $suffix . 'js', __FILE__ ), array( 'wc-add-to-cart-mnm' ), self::VERSION, true );
 
 		$params = array(
-		    'i18n_min_weight_error' => __( 'You need to select another %difference worth of product&hellip;', 'wc-mnm-weight' ),
-			'i18n_max_weight_error' => __( 'Your selections are too heavy, please remove %difference worth of product to continue (%max max)&hellip;', 'wc-mnm-weight' ),
-			'i18n_weight_format'    => sprintf( _x( '%1$s%2$s%3$s', '"Total Weight" string followed by weight followed by weight unit', 'woocommerce-mix-and-match-products' ), '%t', '%w', '%u' ),
-			'i18n_total'            => __( 'Total Weight: ', 'wc-mnm-weight' )
+			'weight_unit' 			=> get_option( 'woocommerce_weight_unit' ),
+			'trim_zeros'            => false === apply_filters( 'woocommerce_price_trim_zeros', true ) ? 'no' : 'yes',
+			'i18n_weight_format'    => esc_html_x( '%w %u', 'Weight followed by weight unit', 'wc-mnm-weight' ),
+			'i18n_total'            => __( 'Total Weight: ', 'wc-mnm-weight' ),
+
+			// translators: %s is current selected weight
+			'i18n_qty_message'                   => __( 'You have selected %s. ', 'wc-mnm-weight' ),
+
+			// translators: %v is the error message. %s is weight left to be selected.
+			'i18n_qty_error'                     => __( '%vPlease select %s to continue&hellip;', 'wc-mnm-weight' ),
+
+			// translators: %v is the error message. %min is the script placeholder for formatted min weight. %max is script placeholder for formatted max weight.
+			'i18n_min_max_qty_error'             => __( '%vPlease choose between %min and %max to continue&hellip;', 'wc-mnm-weight' ),
+			
+			// translators: %v is the error message. %min is the script placeholder for formatted min weight. %max is script placeholder for formatted max weight.
+			'i18n_min_qty_error'                 => __( '%vPlease choose at least %min to continue&hellip;', 'wc-mnm-weight' ),
+			
+			// translators: %v is the error message. %min is the script placeholder for formatted min weight. %max is script placeholder for formatted max weight.
+			'i18n_max_qty_error'                 => __( '%vPlease choose fewer than %max to continue&hellip;', 'wc-mnm-weight' ),
+
 		);
 
 		wp_localize_script( 'wc-add-to-cart-mnm-weight-validation', 'wc_mnm_weight_params', $params );
@@ -290,7 +308,6 @@ class WC_MNM_Weight {
 				'validation_mode'       => $product->get_meta( '_mnm_validation_mode', true ),
 			    'min_weight'            => $product->get_meta( '_mnm_min_container_weight', true ),
 				'max_weight'			=> $product->get_meta( '_mnm_max_container_weight', true ),
-				'weight_unit' 			=> get_option( 'woocommerce_weight_unit' )
 			);
 
 			$params = array_merge( $params, $new_params );
