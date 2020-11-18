@@ -107,7 +107,7 @@ class WC_MNM_Weight {
 
 		woocommerce_wp_text_input( array(
 			'id'            => '_mnm_min_container_weight',
-			'label'       => __( 'Min Container Weight', 'wc-mnm-min-weight' ) . ' (' . get_option( 'woocommerce_weight_unit' ) . ')',
+			'label'       => __( 'Min Container Weight', 'wc-mnm-weight' ) . ' (' . get_option( 'woocommerce_weight_unit' ) . ')',
 			'desc_tip'    => true,
 			'description' => __( 'Min weight of containers in decimal form', 'woocommerce' ),
 			'type'        => 'text',
@@ -119,7 +119,7 @@ class WC_MNM_Weight {
 
 		woocommerce_wp_text_input( array(
 			'id'            => '_mnm_max_container_weight',
-			'label'       => __( 'Max Container Weight', 'wc-mnm-max-weight' ) . ' (' . get_option( 'woocommerce_weight_unit' ) . ')',
+			'label'       => __( 'Max Container Weight', 'wc-mnm-weight' ) . ' (' . get_option( 'woocommerce_weight_unit' ) . ')',
 			'desc_tip'    => true,
 			'description' => __( 'Maximum weight of containers in decimal form', 'woocommerce' ),
 			'type'        => 'text',
@@ -235,11 +235,11 @@ class WC_MNM_Weight {
 
 			// Validate the total weight.
 			if ( $total_weight < $product->get_meta( '_mnm_min_container_weight' ) ) {
-				$error_message = sprintf( __( 'You &quot;%s&quot; is too light.', 'wc-mnm-min-weight' ), $product->get_title() );
+				$error_message = sprintf( __( 'You &quot;%s&quot; is too light.', 'wc-mnm-weight' ), $product->get_title() );
 				wc_add_notice( $error_message, 'error' );
 				$valid = false;
 			} elseif ( $total_weight > $product->get_meta( '_mnm_max_container_weight' ) ) {
-				$error_message = sprintf( __( 'You &quot;%s&quot; is too heavy.', 'wc-mnm-max-weight' ), $product->get_title() );
+				$error_message = sprintf( __( 'You &quot;%s&quot; is too heavy.', 'wc-mnm-weight' ), $product->get_title() );
 				wc_add_notice( $error_message, 'error' );
 				$valid = false;
 			}
