@@ -1,3 +1,5 @@
+/* global wc_mnm_weight_params */
+
 ( function( $ ) {
 
 	/**
@@ -48,7 +50,7 @@
 
 			$.each( container.child_items, function( index, child_item ) {
 
-				item_weight = child_item.$self.find( '.product-weight' ).data( 'weight' );
+				var item_weight = child_item.$self.find( '.product-weight' ).data( 'weight' );
 
 				if( 'undefined' === typeof item_weight ) { 
 					item_weight = 0;
