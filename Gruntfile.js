@@ -1,6 +1,5 @@
 module.exports = function(grunt) {
 
-	const sass = require( 'node-sass' );
 	require( 'load-grunt-tasks' )( grunt );
 
 	// Project configuration.
@@ -10,80 +9,8 @@ module.exports = function(grunt) {
 
 		// Setting folder templates.
 		dirs: {
-			css: 'assets/css',
-			fonts: 'assets/fonts',
 			js: 'assets/js',
-			php: 'includes',
-			scss: 'assets/scss'
-		},
-
-		// Compile all .scss files.
-		sass: {
-			compile: {
-				options: {
-					implementation: sass,
-					sourceMap: 'none'
-				},
-				files: [
-				{
-					expand: true,
-					cwd: '<%= dirs.scss %>/admin/',
-					src: ['*.scss'],
-					dest: '<%= dirs.css %>/admin/',
-					ext: '.css'
-				},
-				{
-					expand: true,
-					cwd: '<%= dirs.scss %>/frontend',
-					src: ['*.scss'],
-					dest: '<%= dirs.css %>/frontend',
-					ext: '.css'
-				}
-				]
-			}
-		},
-
-		// Generate RTL .css files.
-		rtlcss: {
-			dist: {
-				expand: true,
-				src: [
-				'<%= dirs.css %>/admin/*.css',
-				'!<%= dirs.css %>/admin/*-rtl.css',
-				'<%= dirs.css %>/frontend/*.css',
-				'!<%= dirs.css %>/frontend/*-rtl.css'
-				],
-				ext: '-rtl.css'
-			}
-		},
-
-		// Minify all .css files.
-		cssmin: {
-			dist: {
-				files: [{
-					expand: true,
-					src: [
-					'<%= dirs.css %>/admin/*.css',
-					'<%= dirs.css %>/frontend/*.css'
-					],
-					ext: '.css'
-				}]
-			}
-		},
-
-		// Autoprefixer.
-		postcss: {
-			options: {
-				processors: [
-				require( 'autoprefixer' )
-				]
-			},
-			dist: {
-				src: [
-				'<%= dirs.css %>/admin/*.css',
-				'<%= dirs.css %>/frontend/*.css'
-				]
-			}
+			php: 'includes'
 		},
 
 		// Minify .js files.
@@ -147,13 +74,6 @@ module.exports = function(grunt) {
 
 		// Watch changes for assets.
 		watch: {
-			css: {
-				files: [
-				'<%= dirs.scss %>/admin/*.scss',
-				'<%= dirs.scss %>/frontend/*.scss'
-				],
-				tasks: ['sass', 'rtlcss', 'postcss', 'cssmin']
-			},
 			js: {
 				files: [
 				'<%= dirs.js %>/admin/*js',
@@ -308,7 +228,6 @@ module.exports = function(grunt) {
         'default',
         [
 		'js',
-		'css',
         ]
     );
 
@@ -322,24 +241,6 @@ module.exports = function(grunt) {
     );
 
 	grunt.registerTask(
-        'css',
-        [
-		'sass',
-		'rtlcss',
-		'postcss',
-		'cssmin'
-        ]
-    );
-
-	grunt.registerTask(
-        'assets',
-        [
-		'js',
-		'css'
-        ]
-    );
-
-	grunt.registerTask(
         'zip',
         [
 		'clean',
@@ -348,7 +249,7 @@ module.exports = function(grunt) {
         ]
     );
 
-	grunt.registerTask( 'build', [ 'replace', 'assets' ] );
+	grunt.registerTask( 'build', [ 'replace', 'js' ] );
 	grunt.registerTask( 'release', [ 'build', 'addtextdomain', 'makepot', 'zip', 'clean' ] );
 
 };
