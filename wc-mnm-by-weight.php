@@ -199,9 +199,9 @@ class WC_MNM_Weight {
 	public static function display_weight( $mnm_product, $parent_product ){
 
 		if( $mnm_product->has_weight() ) {
-			printf( '<p class="product-weight" data-mnm-id="%d" data-weight="%s">%s</p>', $mnm_product->get_id(), $mnm_product->get_weight(), wc_format_weight( $mnm_product->get_weight() ) );
+			printf( '<p class="product-weight" data-mnm-id="%d" data-weight="%s">%s</p>', esc_attr( $mnm_product->get_id() ), esc_attr( $mnm_product->get_weight() ), wc_format_weight( $mnm_product->get_weight() ) );
 		}
-		
+
 	}
 
 
