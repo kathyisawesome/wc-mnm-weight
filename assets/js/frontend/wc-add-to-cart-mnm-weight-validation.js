@@ -107,7 +107,7 @@
 				container.add_message( error_message.replace( '%v', selected_weight_message ), 'error' );
 
 			// Add selected qty status message if there are no error messages and infinite container is used.
-			} else if ( container.api.get_max_container_size() === false ) {
+			} else if ( false === max_weight ) {
 				container.add_message( self.selected_weight_message( total_weight ) );
 			}
 
