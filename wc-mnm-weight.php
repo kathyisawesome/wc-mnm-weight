@@ -266,7 +266,7 @@ class WC_MNM_Weight {
 
 		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
-		wp_register_script( 'wc-add-to-cart-mnm-weight-validation', plugins_url( '/assets/js/wc-add-to-cart-mnm-weight-validation' .  $suffix . 'js', __FILE__ ), array( 'wc-add-to-cart-mnm' ), self::VERSION, true );
+		wp_register_script( 'wc-add-to-cart-mnm-weight-validation', plugins_url( '/assets/js/frontend/wc-add-to-cart-mnm-weight-validation' .  $suffix . '.js', __FILE__ ), array( 'wc-add-to-cart-mnm' ), self::VERSION, true );
 
 		$params = array(
 			'weight_unit' 			=> get_option( 'woocommerce_weight_unit' ),
