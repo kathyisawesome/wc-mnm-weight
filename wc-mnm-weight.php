@@ -237,11 +237,11 @@ class WC_MNM_Weight {
 
 			// Validate the total weight.
 			if ( $total_weight < $product->get_meta( '_mnm_min_container_weight' ) ) {
-				$error_message = sprintf( __( 'You &quot;%s&quot; is too light.', 'wc-mnm-weight' ), $product->get_title() );
+				$error_message = sprintf( __( 'Your &quot;%s&quot; is too light.', 'wc-mnm-weight' ), $product->get_title() );
 				wc_add_notice( $error_message, 'error' );
 				$valid = false;
 			} elseif ( $total_weight > $product->get_meta( '_mnm_max_container_weight' ) ) {
-				$error_message = sprintf( __( 'You &quot;%s&quot; is too heavy.', 'wc-mnm-weight' ), $product->get_title() );
+				$error_message = sprintf( __( 'Your &quot;%s&quot; is too heavy.', 'wc-mnm-weight' ), $product->get_title() );
 				wc_add_notice( $error_message, 'error' );
 				$valid = false;
 			}
