@@ -117,8 +117,9 @@
 		 * Build the weight html component.
 		 */
 		this.get_formatted_weight = function( weight ) {
+			var localized_weight = String( weight ).replace( '.',  wc_mnm_weight_params.decimal_sep );
 			var unit             = wc_mnm_weight_params.weight_unit;
-			return wc_mnm_weight_params.i18n_weight_format.replace( '%w', parseFloat( weight ) ).replace( '%u', unit );
+			return wc_mnm_weight_params.i18n_weight_format.replace( '%w', localized_weight ).replace( '%u', unit );
 		};
 
 

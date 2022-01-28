@@ -294,27 +294,32 @@ class WC_MNM_Weight {
 
 		wp_register_script( 'wc-add-to-cart-mnm-weight-validation', plugins_url( '/assets/js/frontend/wc-add-to-cart-mnm-weight-validation' .  $suffix . '.js', __FILE__ ), array( 'wc-add-to-cart-mnm' ), time(), true );
 
-		$params = array(
+		$locale = localeconv();
+
 		$params = apply_filters( 'wc_mnm_weight_add_to_cart_parameters', array(
-			'weight_unit' 			=> get_option( 'woocommerce_weight_unit' ),
-			'trim_zeros'            => false === apply_filters( 'woocommerce_price_trim_zeros', true ) ? 'no' : 'yes',
-			'i18n_weight_format'    => esc_html_x( '%w %u', 'Weight followed by weight unit', 'wc-mnm-weight' ),
-			'i18n_total'            => __( 'Total Weight: ', 'wc-mnm-weight' ),
+			'weight_unit'            => get_option( 'woocommerce_weight_unit' ),
+			'trim_zeros'             => false === apply_filters( 'woocommerce_price_trim_zeros', true ) ? 'no' : 'yes',
+			
+			// translators: %w is current selected weight. %u is the unit of weight, ie: kg.
+			'i18n_weight_format'     => esc_html_x( '%w %u', 'Weight followed by weight unit', 'wc-mnm-weight' ),
+			
+			'i18n_total'             => __( 'Total Weight: ', 'wc-mnm-weight' ),
+			'decimal_sep'            => $locale['decimal_point'],
 
 			// translators: %s is current selected weight
-			'i18n_qty_message'                   => __( 'You have selected %s. ', 'wc-mnm-weight' ),
+			'i18n_qty_message'       => __( 'You have selected %s. ', 'wc-mnm-weight' ),
 
 			// translators: %v is the error message. %s is weight left to be selected.
-			'i18n_qty_error'                     => __( '%vPlease select %s to continue&hellip;', 'wc-mnm-weight' ),
+			'i18n_qty_error'         => __( '%vPlease select %s to continue&hellip;', 'wc-mnm-weight' ),
 
 			// translators: %v is the error message. %min is the script placeholder for formatted min weight. %max is script placeholder for formatted max weight.
-			'i18n_min_max_qty_error'             => __( '%vPlease choose between %min and %max to continue&hellip;', 'wc-mnm-weight' ),
+			'i18n_min_max_qty_error' => __( '%vPlease choose between %min and %max to continue&hellip;', 'wc-mnm-weight' ),
 			
 			// translators: %v is the error message. %min is the script placeholder for formatted min weight. %max is script placeholder for formatted max weight.
-			'i18n_min_qty_error'                 => __( '%vPlease choose at least %min to continue&hellip;', 'wc-mnm-weight' ),
+			'i18n_min_qty_error'     => __( '%vPlease choose at least %min to continue&hellip;', 'wc-mnm-weight' ),
 			
 			// translators: %v is the error message. %min is the script placeholder for formatted min weight. %max is script placeholder for formatted max weight.
-			'i18n_max_qty_error'                 => __( '%vPlease choose fewer than %max to continue&hellip;', 'wc-mnm-weight' ),
+			'i18n_max_qty_error'     => __( '%vPlease choose fewer than %max to continue&hellip;', 'wc-mnm-weight' ),
 
 		) );
 
