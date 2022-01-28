@@ -128,7 +128,7 @@
 					num_decimals:    wc_mnm_weight_params.num_decimals,  
 					currency_symbol: '',
 					trim_zeros:      wc_mnm_weight_params.trim_zeros,
-					html:            false,
+					html:            false
 				} );
 
 			var unit = wc_mnm_weight_params.weight_unit;
