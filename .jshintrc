@@ -22,7 +22,6 @@
 		"jQuery": false,
 		"JSON": false,
 		"wp": false,
-		"wc_mnm_params": false,
 		"wc_mnm_weight_params": false
 	}
 }

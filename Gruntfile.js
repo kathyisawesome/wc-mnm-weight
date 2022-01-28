@@ -145,27 +145,12 @@ module.exports = function(grunt) {
 			}
 		},
 
-		'github-release': {
-			options: {
-				repository: 'wc-mnm-weight/<%= pkg.name %>',
-				release: {
-					tag_name: '<%= pkg.version %>',
-					name: '<%= pkg.version %>',
-					body: 'Description of the release'
-				}
-			},
-			files: {
-				src: ['deploy/<%= pkg.version %>/<%= pkg.name %>.zip']
-			}
-		},
-
 		// # Internationalization
 
 		// Add text domain
 		addtextdomain: {
 			options: {
-				textdomain: '<%= pkg.name %>',    // Project text domain.
-				updateDomains: [ 'woocommerce-mix-and-match', 'woocommerce-product-bundles', 'woocommerce-mix-and-match-min-max-quantities', 'woocommerce' ]  // List of text domains to replace.
+				textdomain: '<%= pkg.name %>'    // Project text domain.
 			},
 			target: {
 				files: {
@@ -249,7 +234,8 @@ module.exports = function(grunt) {
         ]
     );
 
-	grunt.registerTask( 'build', [ 'replace', 'js' ] );
-	grunt.registerTask( 'release', [ 'build', 'addtextdomain', 'makepot', 'zip', 'clean' ] );
+	grunt.registerTask( 'dev', [ 'replace', 'js' ] );
+	grunt.registerTask( 'build', [ 'dev', 'addtextdomain', 'makepot' ] );
+	grunt.registerTask( 'release', [ 'dev', 'zip', 'clean' ] );
 
 };
