@@ -10,6 +10,9 @@
  * Developer URI: http://kathyisawesome.com/
  * Text Domain: wc-mnm-weight
  * Domain Path: /languages
+ * 
+ * GitHub Plugin URI: kathyisawesome/wc-mnm-weight
+ * GitHub Plugin URI: https://github.com/kathyisawesome/wc-mnm-weight
  *
  * Copyright: © 2020 Kathy Darling
  * License: GNU General Public License v3.0

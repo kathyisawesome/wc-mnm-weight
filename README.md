@@ -1,5 +1,11 @@
 # WooCommerce Mix and Match Products - Weight Validation
 
+### Quickstart
+
+This is a developmental repo. Clone this repo and run `npm install && npm run build`   
+OR    
+[Download latest release](https://github.com/kathyisawesome/wc-mnm-grouped/releases/latest/download/wc-mnm-weight.zip)
+
 ### What's This?
 
 Experimental mini-extension for [WooCommerce Mix and Match Products](https://woocommerce.com/products/woocommerce-mix-and-match-products/) that validates a container product by the _weight_ of the selected child products.
@@ -20,3 +26,7 @@ Experimental mini-extension for [WooCommerce Mix and Match Products](https://woo
 1. This is provided as is and does not receive priority support.
 2. Please test thoroughly before using in production.
 3. Requires Mix and Match 1.10.5+
+
+### Automatic plugin updates
+
+Plugin updates can be enabled by installing the [Git Updater](https://git-updater.com/) plugin.
