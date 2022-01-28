@@ -295,6 +295,7 @@ class WC_MNM_Weight {
 		wp_register_script( 'wc-add-to-cart-mnm-weight-validation', plugins_url( '/assets/js/frontend/wc-add-to-cart-mnm-weight-validation' .  $suffix . '.js', __FILE__ ), array( 'wc-add-to-cart-mnm' ), self::VERSION, true );
 
 		$params = array(
+		$params = apply_filters( 'wc_mnm_weight_add_to_cart_parameters', array(
 			'weight_unit' 			=> get_option( 'woocommerce_weight_unit' ),
 			'trim_zeros'            => false === apply_filters( 'woocommerce_price_trim_zeros', true ) ? 'no' : 'yes',
 			'i18n_weight_format'    => esc_html_x( '%w %u', 'Weight followed by weight unit', 'wc-mnm-weight' ),
@@ -315,7 +316,7 @@ class WC_MNM_Weight {
 			// translators: %v is the error message. %min is the script placeholder for formatted min weight. %max is script placeholder for formatted max weight.
 			'i18n_max_qty_error'                 => __( '%vPlease choose fewer than %max to continue&hellip;', 'wc-mnm-weight' ),
 
-		);
+		) );
 
 		wp_localize_script( 'wc-add-to-cart-mnm-weight-validation', 'wc_mnm_weight_params', $params );
 
