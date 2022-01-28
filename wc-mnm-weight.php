@@ -303,7 +303,8 @@ class WC_MNM_Weight {
 			// translators: %w is current selected weight. %u is the unit of weight, ie: kg.
 			'i18n_weight_format'     => esc_html_x( '%w %u', 'Weight followed by weight unit', 'wc-mnm-weight' ),
 			
-			'i18n_total'             => __( 'Total Weight: ', 'wc-mnm-weight' ),
+			// translators: %s is the formatted weight, ie: 10kg.
+			'i18n_total'             => __( '<span class="total">Total Weight:</span> %s', 'wc-mnm-weight' ),
 			'decimal_sep'            => $locale['decimal_point'],
 
 			// translators: %s is current selected weight

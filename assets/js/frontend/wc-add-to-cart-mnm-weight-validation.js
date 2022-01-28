@@ -17,7 +17,7 @@
 
 		this.initialize = function() {
 			if( 'weight' === container.$mnm_cart.data( 'validation_mode' ) ) {
-				this.add_counter_div();	
+				this.add_counter();	
 				this.bind_event_handlers();		
 			}
 
@@ -26,9 +26,9 @@
 		/**
 		 * Add counter div.
 		 */
-		this.add_counter_div = function() {
-			if ( ! this.container.$mnm_cart.find( '.wc-mnm-weight-counter' ).length ){
-				$('<div class="wc-mnm-weight-counter"></div>').insertBefore( this.container.$mnm_price );
+		this.add_counter = function() {
+			if ( ! this.container.$mnm_cart.find( '.wc-mnm-weight-counter' ).length ) {
+				$( '<p class="wc-mnm-weight-counter"></p>' ).prependTo( this.container.$mnm_data );
 			}
 
 			this.$counter  = this.container.$mnm_cart.find( '.wc-mnm-weight-counter' );
@@ -61,7 +61,11 @@
 				total_weight += child_item.get_quantity() * item_weight;
 			} );
 
+			// Update the data attribute.
 			container.$mnm_cart.data( 'total_weight', total_weight );
+
+			// Update the UI.
+			self.$counter.html( wc_mnm_weight_params.i18n_total.replace( '%s', self.get_formatted_weight( total_weight ) ) );
 
 		};
 
