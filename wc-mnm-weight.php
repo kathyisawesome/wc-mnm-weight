@@ -290,9 +290,9 @@ class WC_MNM_Weight {
 	 */
 	public static function register_scripts() {
 
-		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-		wp_register_script( 'wc-add-to-cart-mnm-weight-validation', plugins_url( '/assets/js/frontend/wc-add-to-cart-mnm-weight-validation' .  $suffix . '.js', __FILE__ ), array( 'wc-add-to-cart-mnm' ), self::VERSION, true );
+		wp_register_script( 'wc-add-to-cart-mnm-weight-validation', plugins_url( '/assets/js/frontend/wc-add-to-cart-mnm-weight-validation' .  $suffix . '.js', __FILE__ ), array( 'wc-add-to-cart-mnm' ), time(), true );
 
 		$params = array(
 		$params = apply_filters( 'wc_mnm_weight_add_to_cart_parameters', array(
