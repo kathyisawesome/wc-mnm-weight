@@ -17,7 +17,7 @@
 
 		this.initialize = function() {
 			if( 'weight' === container.$mnm_cart.data( 'validation_mode' ) ) {
-				this.add_counter_div();	
+				this.add_counter();	
 				this.bind_event_handlers();		
 			}
 
@@ -26,9 +26,9 @@
 		/**
 		 * Add counter div.
 		 */
-		this.add_counter_div = function() {
-			if ( ! this.container.$mnm_cart.find( '.wc-mnm-weight-counter' ).length ){
-				$('<div class="wc-mnm-weight-counter"></div>').insertBefore( this.container.$mnm_price );
+		this.add_counter = function() {
+			if ( ! this.container.$mnm_cart.find( '.wc-mnm-weight-counter' ).length ) {
+				$( '<p class="wc-mnm-weight-counter"></p>' ).prependTo( this.container.$mnm_data );
 			}
 
 			this.$counter  = this.container.$mnm_cart.find( '.wc-mnm-weight-counter' );
@@ -61,7 +61,11 @@
 				total_weight += child_item.get_quantity() * item_weight;
 			} );
 
+			// Update the data attribute.
 			container.$mnm_cart.data( 'total_weight', total_weight );
+
+			// Update the UI.
+			self.$counter.html( wc_mnm_weight_params.i18n_total.replace( '%s', self.get_formatted_weight( total_weight ) ) );
 
 		};
 
@@ -72,15 +76,15 @@
 
 			container.reset_messages();
 
+			var precision = wc_mnm_weight_params.rounding_precision;
 			var total_weight = container.$mnm_cart.data( 'total_weight' );
-
-			if( typeof total_weight === 'undefined' ) {
-				total_weight = 0;
-			}
-
 			var min_weight = container.$mnm_cart.data( 'min_weight' );
 			var max_weight = container.$mnm_cart.data( 'max_weight' );
 			var error_message = '';
+
+			total_weight = 'undefined' !== typeof total_weight ? wc_mnm_number_round( total_weight, precision ) : 0;
+			min_weight   = 'undefined' !== typeof min_weight   ? wc_mnm_number_round( min_weight, precision )   : 0;
+			max_weight   = 'undefined' !== typeof max_weight   ? wc_mnm_number_round( max_weight, precision )   : 0;
 
 			// Validation.
 			if( min_weight === max_weight && total_weight !== min_weight ) {
@@ -99,7 +103,7 @@
 			}
 
 			// Add error message.
-			if ( error_message !== '' ) {
+			if ( '' !== error_message ) {
 				// "Selected Xunit".
 				var selected_weight_message = self.selected_weight_message( total_weight );
 
@@ -117,8 +121,17 @@
 		 * Build the weight html component.
 		 */
 		this.get_formatted_weight = function( weight ) {
-			var localized_weight = String( weight ).replace( '.',  wc_mnm_weight_params.decimal_sep );
-			var unit             = wc_mnm_weight_params.weight_unit;
+			//var localized_weight = String( weight ).replace( '.',  wc_mnm_weight_params.decimal_sep );
+
+			var localized_weight = wc_mnm_price_format( weight, {
+					decimal_sep:     wc_mnm_weight_params.decimal_sep,
+					num_decimals:    wc_mnm_weight_params.num_decimals,  
+					currency_symbol: '',
+					trim_zeros:      wc_mnm_weight_params.trim_zeros,
+					html:            false,
+				} );
+
+			var unit = wc_mnm_weight_params.weight_unit;
 			return wc_mnm_weight_params.i18n_weight_format.replace( '%w', localized_weight ).replace( '%u', unit );
 		};
 

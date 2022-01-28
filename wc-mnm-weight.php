@@ -32,7 +32,6 @@ class WC_MNM_Weight {
 	 * constants
 	 */
 	CONST VERSION = '1.1.0';
-	CONST REQUIRED_WOO = '4.0.0';
 
 	/**
 	 * WC_MNM_Weight Constructor
@@ -298,13 +297,16 @@ class WC_MNM_Weight {
 
 		$params = apply_filters( 'wc_mnm_weight_add_to_cart_parameters', array(
 			'weight_unit'            => get_option( 'woocommerce_weight_unit' ),
+			'num_decimals'           => absint( wc_get_price_decimals() ),
+			'rounding_precision'     => absint( wc_get_rounding_precision() ),
+			'decimal_sep'            => $locale['decimal_point'],
 			'trim_zeros'             => false === apply_filters( 'woocommerce_price_trim_zeros', true ) ? 'no' : 'yes',
 			
 			// translators: %w is current selected weight. %u is the unit of weight, ie: kg.
 			'i18n_weight_format'     => esc_html_x( '%w %u', 'Weight followed by weight unit', 'wc-mnm-weight' ),
 			
-			'i18n_total'             => __( 'Total Weight: ', 'wc-mnm-weight' ),
-			'decimal_sep'            => $locale['decimal_point'],
+			// translators: %s is the formatted weight, ie: 10kg.
+			'i18n_total'             => __( '<span class="total">Total Weight:</span> %s', 'wc-mnm-weight' ),	
 
 			// translators: %s is current selected weight
 			'i18n_qty_message'       => __( 'You have selected %s. ', 'wc-mnm-weight' ),
