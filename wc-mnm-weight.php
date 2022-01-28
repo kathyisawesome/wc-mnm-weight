@@ -225,9 +225,9 @@ class WC_MNM_Weight {
 	 * @param obj $mnm_product
 	 * @param obj $parent_product - the container product
 	 */
-	public static function display_weight( $mnm_product, $parent_product ){
+	public static function display_weight( $mnm_product, $parent_product ) {
 
-		if( $mnm_product->has_weight() ) {
+		if ( self::validate_by_weight( $parent_product )  && $mnm_product->has_weight() ) {
 			printf( '<p class="product-weight" data-mnm-id="%d" data-weight="%s">%s</p>', esc_attr( $mnm_product->get_id() ), esc_attr( $mnm_product->get_weight() ), wc_format_weight( $mnm_product->get_weight() ) );
 		}
 
@@ -248,7 +248,7 @@ class WC_MNM_Weight {
 	 */
 	public static function weight_validation( $valid, $product, $mnm_stock ) {
 
-		if( self::validate_by_weight( $product ) ) {		
+		if ( self::validate_by_weight( $product ) ) {		
 
 			$managed_items = $mnm_stock->get_managed_items();
 
