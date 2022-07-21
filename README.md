@@ -14,10 +14,8 @@ Experimental mini-extension for [WooCommerce Mix and Match Products](https://woo
 
 ### Usage
 
-1. [Download the plugin zip](https://github.com/kathyisawesome/wc-mnm-weight/archive/master.zip) from Github by clicking the Code button, then "Download Zip".
-2. In your WordPress dashboard, go to Plugins > Add New > Upload Plugin. Then upload the file from Step 1, and activate it.
-3. Go to the Mix and Match tab in the product data metabox (if creating a new product, select Mix and Match as the product type and then go to the Mix and Match tab)
-4. Change the "Validate by" option to "By weight" and then enter the minimum and maximum weights. (Weights are in the units set for your store in the WooCommerce settings)
+1. Go to the Mix and Match tab in the product data metabox (if creating a new product, select Mix and Match as the product type and then go to the Mix and Match tab)
+2. Change the "Validate by" option to "By weight" and then enter the minimum and maximum weights. (Weights are in the units set for your store in the WooCommerce settings)
 
 ![Screenshot of Mix and Match data tab showing additional fields for "Validate by", "min weight", and "max weight"](https://user-images.githubusercontent.com/507025/99579950-26f29080-299c-11eb-856a-719eacdb1f35.png)
 
