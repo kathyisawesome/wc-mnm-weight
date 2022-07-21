@@ -11,7 +11,6 @@
  * Text Domain: wc-mnm-weight
  * Domain Path: /languages
  * 
- * GitHub Plugin URI: kathyisawesome/wc-mnm-weight
  * GitHub Plugin URI: https://github.com/kathyisawesome/wc-mnm-weight
  * Release Asset: true
  *
