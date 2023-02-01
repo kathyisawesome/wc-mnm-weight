@@ -32,6 +32,7 @@ class WC_MNM_Weight {
 	 * constants
 	 */
 	CONST VERSION = '1.1.0';
+	const REQ_MNM_VERSION = '2.0.0';
 
 	/**
 	 * WC_MNM_Weight Constructor
@@ -40,6 +41,11 @@ class WC_MNM_Weight {
      * @return 	WC_MNM_Weight
 	 */
 	public static function init() {
+
+		// Quietly quit if Mix and Match is not active or below 2.0.
+		if ( ! function_exists( 'wc_mix_and_match' ) || version_compare( wc_mix_and_match()->version, self::REQ_MNM_VERSION ) < 0 ) {
+			return false;
+		}
 
 		// Load translation files.
 		add_action( 'init', array( __CLASS__, 'load_plugin_textdomain' ) );
