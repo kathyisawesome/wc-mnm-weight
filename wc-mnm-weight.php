@@ -45,16 +45,16 @@ class WC_MNM_Weight {
 		add_action( 'init', array( __CLASS__, 'load_plugin_textdomain' ) );
 
 		// Add extra meta.
-		add_action( 'woocommerce_mnm_product_options', array( __CLASS__, 'container_weight_size_options') , 10, 2 );
+		add_action( 'wc_mnm_admin_product_options', array( __CLASS__, 'container_weight_size_options') , 10, 2 );
 		add_filter( 'wc_mnm_validation_options', array( __CLASS__, 'validation_options' ) );
 		add_action( 'woocommerce_admin_process_product_object', array( __CLASS__, 'process_meta' ), 20 );
 		
 		// Display the weight on the front end.
-		add_action( 'woocommerce_mnm_child_item_details', array( __CLASS__, 'display_weight' ), 67, 2 );
+		add_action( 'wc_mnm_child_item_details', array( __CLASS__, 'display_weight' ), 67, 2 );
 
 		// Register Scripts.
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'register_scripts' ) );
-		add_filter( 'woocommerce_mix_and_match_data_attributes', array( __CLASS__, 'add_data_attributes' ), 10, 2 );
+		add_filter( 'wc_mnm_container_data_attributes', array( __CLASS__, 'add_data_attributes' ), 10, 2 );
 
 		// Display Scripts.
 		add_action( 'woocommerce_mix-and-match_add_to_cart', array( __CLASS__, 'load_scripts' ) );
@@ -64,9 +64,9 @@ class WC_MNM_Weight {
 		add_action( 'wc_quick_view_enqueue_scripts', array( __CLASS__, 'load_scripts' ) );
 
 		// Validation.
-		add_filter( 'woocommerce_mnm_add_to_cart_container_validation', array( __CLASS__, 'weight_validation' ), 10, 3 );
-		add_filter( 'woocommerce_mnm_cart_container_validation', array( __CLASS__, 'weight_validation' ), 10, 3 );
-		add_filter( 'woocommerce_mnm_add_to_order_container_validation', array( __CLASS__, 'weight_validation' ), 10, 3 );
+		add_filter( 'wc_mnm_add_to_cart_container_validation', array( __CLASS__, 'weight_validation' ), 10, 3 );
+		add_filter( 'wc_mnm_cart_container_validation', array( __CLASS__, 'weight_validation' ), 10, 3 );
+		add_filter( 'wc_mnm_add_to_order_container_validation', array( __CLASS__, 'weight_validation' ), 10, 3 );
 
     }
 
@@ -222,13 +222,16 @@ class WC_MNM_Weight {
 	/**
 	 * Add the min/max attribute
 	 *
-	 * @param obj $mnm_product
-	 * @param obj $parent_product - the container product
+	 * @param WC_MNM_Child_Item $child_item
+	 * @param WC_Product_Mix_and_Match
 	 */
-	public static function display_weight( $mnm_product, $parent_product ) {
+	public static function display_weight( $child_item, $parent_product ) {
 
-		if ( self::validate_by_weight( $parent_product )  && $mnm_product->has_weight() ) {
-			printf( '<p class="product-weight" data-mnm-id="%d" data-weight="%s">%s</p>', esc_attr( $mnm_product->get_id() ), esc_attr( $mnm_product->get_weight() ), wc_format_weight( $mnm_product->get_weight() ) );
+		if ( self::validate_by_weight( $parent_product ) ) {
+			$child_product = $child_item->get_product();
+			if ( $child_product && $child_product->has_weight() ) {
+				printf( '<p class="product-weight" data-mnm-id="%d" data-weight="%s">%s</p>', esc_attr( $child_product->get_id() ), esc_attr( $child_product->get_weight() ), wc_format_weight( $child_product->get_weight() ) );
+			}
 		}
 
 	}
@@ -393,4 +396,4 @@ class WC_MNM_Weight {
 endif; // end class_exists check
 
 // Launch the whole plugin.
-add_action( 'woocommerce_mnm_loaded', array( 'WC_MNM_Weight', 'init' ) );
+add_action( 'plugins_loaded', array( 'WC_MNM_Weight', 'init' ), 20 );
