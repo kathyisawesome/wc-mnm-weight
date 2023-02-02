@@ -70,7 +70,7 @@ class WC_MNM_Weight {
 		add_action( 'wc_quick_view_enqueue_scripts', array( __CLASS__, 'load_scripts' ) );
 
 		// Validation.
-		add_filter( 'wc_mnm_add_to_cart_container_validation', array( __CLASS__, 'validate' ), 10, 3 );
+		add_filter( 'wc_mnm_add_to_cart_container_validation', array( __CLASS__, 'add_to_cart_validation' ), 10, 3 );
 		add_filter( 'wc_mnm_add_to_order_container_validation', array( __CLASS__, 'validate' ), 10, 3 );
 
     }
@@ -245,7 +245,6 @@ class WC_MNM_Weight {
 	/* Cart Functions */
 	/*-----------------------------------------------------------------------------------*/
 
-
 	/**
 	 * Server-side weight validation
 	 * 
@@ -254,33 +253,78 @@ class WC_MNM_Weight {
 	 * @param obj WC_Mix_and_Match_Stock_Manager $mnm_stock
 	 * @return  bool 
 	 */
-	public static function validate( $valid, $product, $mnm_stock ) {
+	public static function add_to_cart_validation( $is_valid, $product, $mnm_stock ) {
 
-		if ( self::is_weight_validation_mode( $product ) ) {		
+		// Skip legacy validation on Store API requests.
+		if ( ! $is_valid || wc()->is_rest_api_request() ) {
+			return $is_valid;
+		}
 
-			$managed_items = $mnm_stock->get_managed_items();
+		if ( self::is_weight_validation_mode( $product ) ) {
+			
+			$is_valid = self::validate();
 
-			$total_weight = 0;
+			if ( is_wp_error( $is_valid ) ) {
 
-			foreach ( $managed_items as $managed_item_id => $managed_item ) {
-				$managed_product       = wc_get_product( $managed_item_id );
-				$item_title            = $managed_product->get_title();
-				$total_weight 		  += $managed_product->get_weight() * $managed_item[ 'quantity' ];
+				// translators: %1$s is the product title. %2$s is the reason it cannot be added to the cart.
+				$error_message = sprintf( esc_html__( '&quot;%1$s&quot; could not be added to the cart. %2$s', 'wc-mnm-weight' ), $product->get_title(), $is_valid->get_error_message() );
+
+				wc_add_notice( $error_message, 'error' );
+
+				$is_valid = false;
+
 			}
 
-			// Validate the total weight.
-			if ( $total_weight < $product->get_meta( '_mnm_min_container_weight' ) ) {
-				$error_message = sprintf( __( 'Your &quot;%s&quot; is too light.', 'wc-mnm-weight' ), $product->get_title() );
-				wc_add_notice( $error_message, 'error' );
-				$valid = false;
-			} elseif ( $total_weight > $product->get_meta( '_mnm_max_container_weight' ) ) {
-				$error_message = sprintf( __( 'Your &quot;%s&quot; is too heavy.', 'wc-mnm-weight' ), $product->get_title() );
-				wc_add_notice( $error_message, 'error' );
-				$valid = false;
-			}
+		}
 
-			$valid = true;
+		return $is_valid;
 
+	}
+
+	/**
+	 * Server-side weight validation
+	 * 
+	 * @param obj WC_Product_Mix_and_Match $product
+	 * @param obj WC_Mix_and_Match_Stock_Manager $mnm_stock
+	 * @return  bool|WP_Error 
+	 */
+	public static function validate( $product, $mnm_stock ) {
+
+		$selected_items = $mnm_stock->get_items();
+
+		$total_weight = 0;
+
+		// The weight of items allowed to be in the container. NB: wc_format_decimal() defaults to the number of decimal places in currency settings.
+		$min_weight = '' !== $product->get_meta( '_mnm_min_container_weight' ) ? wc_format_decimal( $product->get_meta( '_mnm_min_container_weight' ) ) : 0;
+		$max_weight = '' !== $product->get_meta( '_mnm_max_container_weight' ) ? wc_format_decimal( $product->get_meta( '_mnm_max_container_weight' ) ) : 0;
+		
+		// Sum up the total container weight based on quantities selected.
+		foreach ( $selected_items as $selected_item ) {
+			$selected_product      = $selected_item->get_product();
+			$total_weight 		  += $selected_product ? $selected_product->get_weight() * $managed_item[ 'quantity' ] : 0;
+		}
+
+		// @todo - Need handle weight rounding/precision.
+
+		// Validate the total weight.
+		if ( $min_weight && $min_weight === $max_weight && $total_weight !== $min_weight ) {
+			
+			// translators: %s is the formatted min weight.
+			$error_message = sprintf( esc_html_x( 'You have selected an invalid amount of product. Please choose exactly %s worth of product.', '[Frontend]', 'wc-mnm-weight' ), wc_format_weight( $min_weight ) );
+
+			$valid = new WP_Error( 'wc_mnm_container_min_weight', $error_message );
+		} elseif ( $min_weight && $total_weight < $min_weight ) {
+			
+			// translators: %s is the formatted min weight.
+			$error_message = sprintf( esc_html_x( 'You have not selected enough product. Please choose at least %s worth of product.', '[Frontend]', 'wc-mnm-weight' ), wc_format_weight( $min_weight ) );
+
+			$valid = new WP_Error( 'wc_mnm_container_min_weight', $error_message );
+		} elseif ( $max_weight && $total_weight > $max_weight ) {
+			
+			// translators: %s is the formatted max weight.
+			$error_message = sprintf( esc_html_x( 'You have selected too much product. Please choose less than %s worth of product.', '[Frontend]', 'wc-mnm-weight' ), wc_format_weight( $max_weight ) );
+
+			$valid = new WP_Error( 'wc_mnm_container_max_weight', $error_message );
 		}
 
 		return $valid;
