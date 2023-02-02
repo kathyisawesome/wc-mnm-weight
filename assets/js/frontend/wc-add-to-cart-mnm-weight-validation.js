@@ -52,7 +52,8 @@
 			container.$mnm_cart.data( 'total_weight', total_weight );
 
 			// Update the UI with a formatted total.
-			var max_weight = 'undefined' !== typeof container.$mnm_cart.data( 'max_weight' )  ? wc_mnm_number_round( container.$mnm_cart.data( 'max_weight' ) ) : 0;
+			var max_weight      = 'undefined' !== typeof container.$mnm_cart.data( 'max_weight' )  ? wc_mnm_number_round( container.$mnm_cart.data( 'max_weight' ) ) : 0;
+			var formatted_total = '';
 
 			if (max_weight) {
 				formatted_total = wc_mnm_params.i18n_weight_format_counter;
