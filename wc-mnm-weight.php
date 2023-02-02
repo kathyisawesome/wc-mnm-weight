@@ -20,8 +20,6 @@
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
  */
 
-
-
 /**
  * The Main WC_MNM_Weight class
  **/
@@ -33,7 +31,7 @@ class WC_MNM_Weight {
 	 * constants
 	 */
 	const VERSION = '1.1.0';
-	const REQ_MNM_VERSION = '2.0.0';
+	const REQ_MNM_VERSION = '2.4.0-beta.3';
 
 	/**
 	 * WC_MNM_Weight Constructor
