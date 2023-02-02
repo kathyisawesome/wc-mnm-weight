@@ -122,24 +122,24 @@ class WC_MNM_Weight {
 
 		woocommerce_wp_text_input( array(
 			'id'            => '_mnm_min_container_weight',
-			'label'       => esc_html__( 'Min Container Weight', 'wc-mnm-weight' ) . ' (' . get_option( 'woocommerce_weight_unit' ) . ')',
-			'desc_tip'    => true,
-			'description' => esc_html__( 'Min weight of containers in decimal form', 'wc-mnm-weight' ),
-			'type'        => 'text',
-			'data_type'   => 'decimal',
-			'value'			=> $mnm_product_object->get_meta( '_mnm_min_container_weight', true, 'edit' ),
+			'label'         => esc_html__( 'Min Container Weight', 'wc-mnm-weight' ) . ' (' . get_option( 'woocommerce_weight_unit' ) . ')',
 			'desc_tip'      => true,
-			'wrapper_class' => 'show_if_weight_validation_mode'
+			'description'   => esc_html__( 'Min weight of containers in decimal form', 'wc-mnm-weight' ),
+			'type'          => 'text',
+			'data_type'     => 'decimal',
+			'value'			=> self::get_min_container_weight( $mnm_product_object ),
+			'desc_tip'      => true,
+			'wrapper_class' => 'show_if_weight_validation_mode',
 		) );
 
 		woocommerce_wp_text_input( array(
 			'id'            => '_mnm_max_container_weight',
-			'label'       => esc_html__( 'Max Container Weight', 'wc-mnm-weight' ) . ' (' . get_option( 'woocommerce_weight_unit' ) . ')',
-			'desc_tip'    => true,
-			'description' => esc_html__( 'Maximum weight of containers in decimal form', 'wc-mnm-weight' ),
-			'type'        => 'text',
-			'data_type'   => 'decimal',
-			'value'			=> $mnm_product_object->get_meta( '_mnm_max_container_weight', true, 'edit' ),
+			'label'         => esc_html__( 'Max Container Weight', 'wc-mnm-weight' ) . ' (' . get_option( 'woocommerce_weight_unit' ) . ')',
+			'desc_tip'      => true,
+			'description'   => esc_html__( 'Maximum weight of containers in decimal form', 'wc-mnm-weight' ),
+			'type'          => 'text',
+			'data_type'     => 'decimal',
+			'value'			=> self::get_max_container_weight( $mnm_product_object ),
 			'desc_tip'      => true,
 			'wrapper_class' => 'show_if_weight_validation_mode'
 		) );
@@ -295,8 +295,8 @@ class WC_MNM_Weight {
 		$total_weight = 0;
 
 		// The weight of items allowed to be in the container. NB: wc_format_decimal() defaults to the number of decimal places in currency settings.
-		$min_weight = '' !== $product->get_meta( '_mnm_min_container_weight' ) ? wc_format_decimal( $product->get_meta( '_mnm_min_container_weight' ) ) : 0;
-		$max_weight = '' !== $product->get_meta( '_mnm_max_container_weight' ) ? wc_format_decimal( $product->get_meta( '_mnm_max_container_weight' ) ) : 0;
+		$min_weight = self::get_min_container_weight( $product );
+		$max_weight = self::get_max_container_weight( $product );
 		
 		// Sum up the total container weight based on quantities selected.
 		foreach ( $selected_items as $selected_item ) {
@@ -395,8 +395,8 @@ class WC_MNM_Weight {
 
 			$new_params = array(
 				'validation_mode'       => 'weight',
-			    'min_weight'            => $product->get_meta( '_mnm_min_container_weight', true ),
-				'max_weight'			=> $product->get_meta( '_mnm_max_container_weight', true ),
+			    'min_weight'            => self::get_min_container_weight( $product ),
+				'max_weight'			=> self::get_max_container_weight( $product ),
 			);
 
 			$params = array_merge( $params, $new_params );
@@ -427,6 +427,23 @@ class WC_MNM_Weight {
 	 */
 	public static function is_weight_validation_mode( $product ) {
 		return 'weight' === $product->get_meta( '_mnm_validation_mode', true );
+
+	/**
+	 * Does this product validate by weight.
+	 * @param  WC_Product
+	 * @return string|float
+	 */
+	public static function get_min_container_weight( $product ) {
+		return $product && '' !== $product->get_meta( '_mnm_min_container_weight', true ) ? wc_format_decimal( $product->get_meta( '_mnm_min_container_weight', true ) ) : 0;
+	}
+
+	/**
+	 * Does this product validate by weight.
+	 * @param  WC_Product
+	 * @return string
+	 */
+	public static function get_max_container_weight( $product ) {
+		return '' !== $product && $product->get_meta( '_mnm_max_container_weight', true ) ? wc_format_decimal( $product->get_meta( '_mnm_max_container_weight', true ) ) : '';
 	}
 
 	/**
