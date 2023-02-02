@@ -151,16 +151,7 @@
 		 * Build the weight html component.
 		 */
 		this.get_formatted_weight = function( weight ) {
-			//var localized_weight = String( weight ).replace( '.',  wc_mnm_weight_params.decimal_sep );
-
-			return wc_mnm_params.i18n_weight_format.replace( '%w', localized_weight ).replace( '%u', unit );
-					num_decimals:    wc_mnm_weight_params.num_decimals,  
-					currency_symbol: '',
-					trim_zeros:      wc_mnm_weight_params.trim_zeros,
-					html:            false
-				} );
-
-			var unit = wc_mnm_weight_params.weight_unit;
+			return wc_mnm_params.i18n_weight_format.replace( '%w', wc_mnm_number_format( weight ) ).replace( '%u', wc_mnm_params.weight_unit );
 		};
 
 
