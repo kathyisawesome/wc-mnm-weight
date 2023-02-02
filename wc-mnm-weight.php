@@ -114,7 +114,7 @@ class WC_MNM_Weight {
 				array(
 					'id'      => '_mnm_validation_mode',
 					'class'   => 'select short mnm_validation_mode',
-					'label'   => __( 'Validation mode', 'wc-mnm-weight' ),
+					'label'   => esc_html__( 'Validation mode', 'wc-mnm-weight' ),
 					'value'	  => $value,
 					'options' => $allowed_options,
 				)
@@ -123,9 +123,9 @@ class WC_MNM_Weight {
 
 		woocommerce_wp_text_input( array(
 			'id'            => '_mnm_min_container_weight',
-			'label'       => __( 'Min Container Weight', 'wc-mnm-weight' ) . ' (' . get_option( 'woocommerce_weight_unit' ) . ')',
+			'label'       => esc_html__( 'Min Container Weight', 'wc-mnm-weight' ) . ' (' . get_option( 'woocommerce_weight_unit' ) . ')',
 			'desc_tip'    => true,
-			'description' => __( 'Min weight of containers in decimal form', 'wc-mnm-weight' ),
+			'description' => esc_html__( 'Min weight of containers in decimal form', 'wc-mnm-weight' ),
 			'type'        => 'text',
 			'data_type'   => 'decimal',
 			'value'			=> $mnm_product_object->get_meta( '_mnm_min_container_weight', true, 'edit' ),
@@ -135,9 +135,9 @@ class WC_MNM_Weight {
 
 		woocommerce_wp_text_input( array(
 			'id'            => '_mnm_max_container_weight',
-			'label'       => __( 'Max Container Weight', 'wc-mnm-weight' ) . ' (' . get_option( 'woocommerce_weight_unit' ) . ')',
+			'label'       => esc_html__( 'Max Container Weight', 'wc-mnm-weight' ) . ' (' . get_option( 'woocommerce_weight_unit' ) . ')',
 			'desc_tip'    => true,
-			'description' => __( 'Maximum weight of containers in decimal form', 'wc-mnm-weight' ),
+			'description' => esc_html__( 'Maximum weight of containers in decimal form', 'wc-mnm-weight' ),
 			'type'        => 'text',
 			'data_type'   => 'decimal',
 			'value'			=> $mnm_product_object->get_meta( '_mnm_max_container_weight', true, 'edit' ),
