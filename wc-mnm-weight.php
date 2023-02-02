@@ -62,6 +62,10 @@ class WC_MNM_Weight {
 		add_filter( 'woocommerce_product_get_max_container_size', array( __CLASS__, 'min_container_size' ), 10, 2 );
 		add_filter( 'woocommerce_product_get_max_container_size', array( __CLASS__, 'max_container_size' ), 10, 2 );
 
+
+		// Restrict child maximums by their weight limitations instead of quantity.
+		add_filter( 'wc_mnm_child_item_quantity_input_max', array( __CLASS__, 'child_item_max' ), 10, 2 );
+
 		// Register Scripts.
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'register_scripts' ) );
 		add_filter( 'wc_mnm_container_data_attributes', array( __CLASS__, 'add_data_attributes' ), 10, 2 );
@@ -273,6 +277,44 @@ class WC_MNM_Weight {
 
 		if ( self::is_weight_validation_mode( $container ) ) {
 			$max = '';
+		}
+
+		return $max;
+
+	}
+
+	
+
+	/**
+	 * Limit child item by weight, not quantity
+	 *
+	 * @param string|int $max
+	 * @param WC_MNM_Child_Item $child_item
+	 * @return int
+	 */
+	public static function child_item_max( $max, $child_item ) {
+
+		if ( self::is_weight_validation_mode( $child_item->get_container() ) && $child_item->get_product() ) {
+
+			$child_product = $child_item->get_product();
+			$container_max = self::get_max_container_weight( $child_item->get_container() );
+
+			if ( $child_product->has_weight() && $container_max ) {
+
+				// Should get excluded on exclude_items() but just in case.
+				if ( $child_product->get_weight() > $container_max ) {
+					$max = 0;
+				} else {
+					// If product has weight, calculate how much weight can fit into the container. This is the quantitiy limit.
+					$weight_limit = floor( $container_max / $child_product->get_weight() );
+
+					// Double check weight limit against stock limit.
+					$max          = $child_product->get_max_purchase_quantity() > 0 ? min( $weight_limit, $child_product->get_max_purchase_quantity() ) : $weight_limit;
+
+				}
+
+			}
+
 		}
 
 		return $max;
