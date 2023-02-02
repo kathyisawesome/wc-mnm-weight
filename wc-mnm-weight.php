@@ -130,7 +130,7 @@ class WC_MNM_Weight {
 			'data_type'   => 'decimal',
 			'value'			=> $mnm_product_object->get_meta( '_mnm_min_container_weight', true, 'edit' ),
 			'desc_tip'      => true,
-			'wrapper_class' => 'show_if_validate_by_weight'
+			'wrapper_class' => 'show_if_weight_validation_mode'
 		) );
 
 		woocommerce_wp_text_input( array(
@@ -142,7 +142,7 @@ class WC_MNM_Weight {
 			'data_type'   => 'decimal',
 			'value'			=> $mnm_product_object->get_meta( '_mnm_max_container_weight', true, 'edit' ),
 			'desc_tip'      => true,
-			'wrapper_class' => 'show_if_validate_by_weight'
+			'wrapper_class' => 'show_if_weight_validation_mode'
 		) );
 
 		?>
@@ -155,13 +155,13 @@ class WC_MNM_Weight {
 					
 					if( '' === value ) {
 						$( "#mnm_product_data .mnm_container_size_options" ).show();
-						$( "#mnm_product_data .show_if_validate_by_weight" ).hide();
+						$( "#mnm_product_data .show_if_weight_validation_mode" ).hide();
 					} else {
 						$( "#mnm_product_data .mnm_container_size_options" ).hide();
 						if( 'weight' === value ) {
-							$( "#mnm_product_data .show_if_validate_by_weight" ).show();
+							$( "#mnm_product_data .show_if_weight_validation_mode" ).show();
 						} else {
-							$( "#mnm_product_data .show_if_validate_by_weight" ).hide();
+							$( "#mnm_product_data .show_if_weight_validation_mode" ).hide();
 						}
 					}
 				} );
