@@ -73,7 +73,7 @@
 			if ( 'weight' === container.validation_mode ) {
 
 				// Reset validation errors.
-				container.reset_messages('error');
+				container.reset_messages();
 
 				var precision      = wc_mnm_params.rounding_precision;
 				var total_weight   = 'undefined' !== typeof container.$mnm_cart.data( 'total_weight' ) ? wc_mnm_number_round( container.$mnm_cart.data( 'total_weight' ), precision ) : 0;
