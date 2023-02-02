@@ -1,7 +1,7 @@
 {
   "title": "WooCommerce Mix and Match Products - By Weight",
   "name": "wc-mnm-weight",
-  "version": "1.3.0",
+  "version": "2.0.0-beta.1",
   "description": "Validate mix and match products by weight.",
   "main": "Gruntfile.js",
   "license": "GPL-3.0",

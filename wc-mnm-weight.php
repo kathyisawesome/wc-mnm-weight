@@ -2,7 +2,7 @@
 /**
  * Plugin URI: http://www.woocommerce.com/products/woocommerce-mix-and-match-products/
  * Plugin Name: WooCommerce Mix and Match - By Weight
- * Version: 1.3.0
+ * Version: 2.0.0-beta.1
  * Description: Validate container by weight, requires MNM 1.10.5
  * Author: Kathy Darling
  * Author URI: http://kathyisawesome.com/
@@ -30,7 +30,7 @@ class WC_MNM_Weight {
 	/**
 	 * constants
 	 */
-	const VERSION = '1.1.0';
+	const VERSION = '2.0.0-beta.1';
 	const REQ_MNM_VERSION = '2.4.0-beta.3';
 
 	/**
