@@ -58,6 +58,10 @@ class WC_MNM_Weight {
 		// Display the weight on the front end.
 		add_action( 'wc_mnm_child_item_details', array( __CLASS__, 'display_weight' ), 67, 2 );
 
+		// Unset any quantity restrictions on the container since we don't use it for validation.
+		add_filter( 'woocommerce_product_get_max_container_size', array( __CLASS__, 'min_container_size' ), 10, 2 );
+		add_filter( 'woocommerce_product_get_max_container_size', array( __CLASS__, 'max_container_size' ), 10, 2 );
+
 		// Register Scripts.
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'register_scripts' ) );
 		add_filter( 'wc_mnm_container_data_attributes', array( __CLASS__, 'add_data_attributes' ), 10, 2 );
@@ -238,6 +242,40 @@ class WC_MNM_Weight {
 				printf( '<p class="product-weight" data-mnm-id="%d" data-weight="%s">%s</p>', esc_attr( $child_product->get_id() ), esc_attr( $child_product->get_weight() ), wc_format_weight( $child_product->get_weight() ) );
 			}
 		}
+
+	}
+
+	/**
+	 * Remove any accidental min quantity limitations when validating by weight
+	 *
+	 * @param int $min
+	 * @param WC_Product_Mix_and_Match $container
+	 * @return string
+	 */
+	public static function min_container_size( $min, $container ) {
+
+		if ( self::is_weight_validation_mode( $container ) ) {
+			$min = '';
+		}
+
+		return $min;
+
+	}
+
+	/**
+	 * Remove any accidental max quantity limitations when validating by weight
+	 *
+	 * @param string|int $max
+	 * @param WC_Product_Mix_and_Match $container
+	 * @return string
+	 */
+	public static function max_container_size( $max, $container ) {
+
+		if ( self::is_weight_validation_mode( $container ) ) {
+			$max = '';
+		}
+
+		return $max;
 
 	}
 
