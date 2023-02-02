@@ -62,6 +62,8 @@ class WC_MNM_Weight {
 		add_filter( 'woocommerce_product_get_max_container_size', array( __CLASS__, 'min_container_size' ), 10, 2 );
 		add_filter( 'woocommerce_product_get_max_container_size', array( __CLASS__, 'max_container_size' ), 10, 2 );
 
+		// Hide too heavy items.
+		add_filter( 'wc_mnm_child_item_is_visible', array( __CLASS__, 'exclude_items' ), 10, 2 );
 
 		// Restrict child maximums by their weight limitations instead of quantity.
 		add_filter( 'wc_mnm_child_item_quantity_input_max', array( __CLASS__, 'child_item_max' ), 10, 2 );
@@ -283,6 +285,27 @@ class WC_MNM_Weight {
 
 	}
 
+
+	/**
+	 * Limit child item by weight, not quantity
+	 *
+	 * @param bool $is_visible
+	 * @param WC_MNM_Child_Item $child_item
+
+	 * @return bool
+	 */
+	public static function exclude_items( $is_visible, $child_item ) {
+		if ( self::is_weight_validation_mode( $child_item->get_container() ) && $child_item->get_product() ) {
+			$child_product = $child_item->get_product();
+			$container_max = self::get_max_container_weight( $child_item->get_container() );
+
+			if ( $child_product->has_weight() && $child_product->get_weight() > $container_max ) {
+				$is_visible = false;
+			}
+
+		}
+		return $is_visible;
+	}
 	
 
 	/**
