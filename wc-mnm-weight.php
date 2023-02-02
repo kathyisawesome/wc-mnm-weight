@@ -83,7 +83,7 @@ class WC_MNM_Weight {
 
 		// Validation.
 		add_filter( 'wc_mnm_add_to_cart_container_validation', array( __CLASS__, 'add_to_cart_validation' ), 10, 3 );
-		add_filter( 'wc_mnm_add_to_order_container_validation', array( __CLASS__, 'validate' ), 10, 3 );
+		add_filter( 'wc_mnm_add_to_order_container_validation', array( __CLASS__, 'add_to_order_validation' ), 10, 3 );
 
     }
 
@@ -433,6 +433,46 @@ class WC_MNM_Weight {
 		}
 
 		return $valid;
+	}
+
+	/*-----------------------------------------------------------------------------------*/
+	/* Order Functions */
+	/*-----------------------------------------------------------------------------------*/
+
+	/**
+	 * Server-side weight validation.
+	 * 
+	 * @param bool $is_valid
+	 * @param obj WC_Product_Mix_and_Match $product
+	 * @param obj WC_Mix_and_Match_Stock_Manager $mnm_stock
+	 * @return  bool 
+	 */
+	public static function add_to_order_validation( $is_valid, $product, $mnm_stock ) {
+
+		// Skip legacy validation on Store API requests.
+		if ( ! $is_valid || wc()->is_rest_api_request() ) {
+			return $is_valid;
+		}
+
+		if ( self::is_weight_validation_mode( $product ) ) {
+			
+			$is_valid = self::validate();
+
+			if ( is_wp_error( $is_valid ) ) {
+
+				// translators: %1$s is the product title. %2$s is the reason it cannot be added to the cart.
+				$error_message = sprintf( esc_html__( '&quot;%1$s&quot; could not be added to the order. %2$s', 'wc-mnm-weight' ), $product->get_title(), $is_valid->get_error_message() );
+
+				wc_add_notice( $error_message, 'error' );
+
+				$is_valid = false;
+
+			}
+
+		}
+
+		return $is_valid;
+
 	}
 
 	/*-----------------------------------------------------------------------------------*/
