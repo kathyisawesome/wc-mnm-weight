@@ -74,45 +74,75 @@
 		 */
 		this.validate = function( event, container ) {
 
-			container.reset_messages();
+			if ( 'weight' === container.validation_mode ) {
 
-			var precision      = wc_mnm_params.rounding_precision;
-			var total_weight = container.$mnm_cart.data( 'total_weight' );
-			var min_weight = container.$mnm_cart.data( 'min_weight' );
-			var max_weight = container.$mnm_cart.data( 'max_weight' );
-			var error_message = '';
+				// Reset validation errors.
+				container.reset_messages('error');
 
-			total_weight = 'undefined' !== typeof total_weight ? wc_mnm_number_round( total_weight, precision ) : 0;
-			min_weight   = 'undefined' !== typeof min_weight   ? wc_mnm_number_round( min_weight, precision )   : 0;
-			max_weight   = 'undefined' !== typeof max_weight   ? wc_mnm_number_round( max_weight, precision )   : 0;
+				var precision      = wc_mnm_params.rounding_precision;
+				var total_weight   = 'undefined' !== typeof container.$mnm_cart.data( 'total_weight' ) ? wc_mnm_number_round( container.$mnm_cart.data( 'total_weight' ), precision ) : 0;
+				var min_weight     = 'undefined' !== typeof container.$mnm_cart.data( 'min_weight' )   ? wc_mnm_number_round( container.$mnm_cart.data( 'min_weight' ), precision )   : 0;
+				var max_weight     = 'undefined' !== typeof container.$mnm_cart.data( 'max_weight' )   ? wc_mnm_number_round( container.$mnm_cart.data( 'max_weight' ), precision )   : 0;
+				var status_message = self.selected_weight_message(total_weight); // "Selected 99kg".
+				var valid_message  = '';
 
-			// Validation.
-			if( min_weight === max_weight && total_weight !== min_weight ) {
-				error_message = wc_mnm_params.i18n_weight_qty_error.replace( '%s', self.get_formatted_weight( min_weight ) );
-			}
-			// Validate a range.
-			else if( max_weight > 0 && min_weight > 0 && ( total_weight < min_weight || total_weight > max_weight ) ) {
-				error_message = wc_mnm_params.i18n_weight_min_max_qty_error.replace( '%max', self.get_formatted_weight( max_weight ) ).replace( '%min', self.get_formatted_weight( min_weight ) );
-			}
-			// Validate that a container has minimum weight.
-			else if( min_weight > 0 && total_weight < min_weight ) {
-				error_message = wc_mnm_params.i18n_weight_min_weight_error.replace( '%min', self.get_formatted_weight( min_weight ) );
-			// Validate that a container has less than the maximum weight.
-			} else if ( max_weight > 0 && total_weight > max_weight ) {
-				error_message = wc_mnm_params.i18n_weight_max_weight_error.replace( '%max', self.get_formatted_weight( max_weight ) );
-			}
+				// Validation.
+				switch (true) {
+					// Validate a fixed weight container.
+					case min_weight > 0 && min_weight === max_weight:
 
-			// Add error message.
-			if ( '' !== error_message ) {
-				// "Selected Xunit".
-				var selected_weight_message = self.selected_weight_message( total_weight );
+						valid_message = wc_mnm_params.i18n_valid_fixed_message;
 
-				// Add error message, replacing placeholders with current values.
-				container.add_message( error_message.replace( '%v', selected_weight_message ), 'error' );
+						if (total_weight !== min_weight) {
+							error_message = wc_mnm_params.i18n_weight_qty_error.replace('%s', self.get_formatted_weight( min_weight ) );
+							container.add_message(error_message.replace('%v', status_message), 'error');
+						}
 
-			// Add selected qty status message if there are no error messages and infinite container is used.
-			} else if ( false === max_weight ) {
-				container.add_message( self.selected_weight_message( total_weight ) );
+						break;
+
+					// Validate that a container has less than the maximum weight.
+					case max_weight > 0 && min_weight === 0:
+
+						valid_message = wc_mnm_params.i18n_valid_max_message;
+
+						if (total_weight > max_weight) {
+							error_message = wc_mnm_params.i18n_weight_max_weight_error.replace( '%max', self.get_formatted_weight( max_weight ) );
+							container.add_message(error_message.replace('%v', status_message), 'error');
+						}
+
+						break;
+
+					// Validate a range.
+					case max_weight > 0 && min_weight > 0:
+
+						valid_message = wc_mnm_params.i18n_valid_range_message;
+
+						if (total_weight < min_weight || total_weight > max_weight) {
+							error_message = wc_mnm_params.i18n_weight_min_max_qty_error.replace( '%max', self.get_formatted_weight( max_weight ) ).replace( '%min', self.get_formatted_weight( min_weight ) );
+							container.add_message(error_message.replace('%v', status_message), 'error');
+						}
+						break;
+
+					// Validate that a container has minimum number of items.
+					case min_weight >= 0:
+
+						valid_message = wc_mnm_params.i18n_valid_min_message;
+
+						if (total_weight < min_weight) {
+							error_message = wc_mnm_params.i18n_weight_min_weight_error.replace( '%min', self.get_formatted_weight( min_weight ) );
+							container.add_message(error_message.replace('%v', status_message), 'error');
+						}
+
+						break;
+
+				}
+
+				// Add selected qty status message if there are no error messages.
+				if (container.passes_validation() && valid_message !== '') {
+					valid_message = valid_message.replace('%max', max_weight).replace('%min', min_weight);
+					container.add_message(valid_message.replace('%v', status_message));
+				}
+
 			}
 
 		};
