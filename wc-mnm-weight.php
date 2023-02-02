@@ -506,6 +506,9 @@ class WC_MNM_Weight {
 			// translators:  %w is current selected weight. %u is the unit of weight, ie: kg.
 			'i18n_weight_format'              => esc_html_x( '%w %u', 'Weight followed by weight unit', '[Frontend]', 'wc-mnm-weight' ),
 
+			// translators: %s is current weight. %max is the container maximum.
+			'i18n_weight_format_counter'      => _x( '%s/%max', '[Frontend]Status counter format. Ex: 1/10 kg', 'wc-mnm-weight' ),
+
 			// translators:  %s is current selected weight
 			'i18n_weight_qty_message'         => esc_html_x( 'You have selected %s.', '[Frontend]', 'wc-mnm-weight' ),
 

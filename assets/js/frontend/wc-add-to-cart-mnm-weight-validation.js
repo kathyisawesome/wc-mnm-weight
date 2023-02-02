@@ -51,8 +51,17 @@
 			// Update the data attribute.
 			container.$mnm_cart.data( 'total_weight', total_weight );
 
-			// Update the UI.
-			container.$mnm_cart.data( 'formatted_total_weight', self.get_formatted_weight( total_weight ) );
+			// Update the UI with a formatted total.
+			var max_weight = 'undefined' !== typeof container.$mnm_cart.data( 'max_weight' )  ? wc_mnm_number_round( container.$mnm_cart.data( 'max_weight' ) ) : 0;
+
+			if (max_weight) {
+				formatted_total = wc_mnm_params.i18n_weight_format_counter;
+				formatted_total = formatted_total.replace('%s', total_weight).replace('%max', self.get_formatted_weight( max_weight ));
+			} else {
+				formatted_total = self.get_formatted_weight( total_weight );
+			}
+	
+			container.$mnm_cart.data( 'formatted_total_weight', formatted_total );
 
 		};
 
