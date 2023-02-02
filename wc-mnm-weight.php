@@ -210,7 +210,7 @@ class WC_MNM_Weight {
 
 			$allowed_options = self::get_validation_options();
 
-			if( ! empty( $_POST[ '_mnm_validation_mode' ] ) && array_key_exists( $_POST[ '_mnm_validation_mode' ], $allowed_options ) ) {
+			if( ! empty( $_POST[ '_mnm_validation_mode' ] ) && array_key_exists( wc_clean( $_POST[ '_mnm_validation_mode' ] ), $allowed_options ) ) {
 				$product->update_meta_data( '_mnm_validation_mode', wc_clean( $_POST[ '_mnm_validation_mode' ] ) );
 			} else {
 				$product->delete_meta_data( '_mnm_validation_mode' );
