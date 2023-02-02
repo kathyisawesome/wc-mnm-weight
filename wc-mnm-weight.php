@@ -70,9 +70,8 @@ class WC_MNM_Weight {
 		add_action( 'wc_quick_view_enqueue_scripts', array( __CLASS__, 'load_scripts' ) );
 
 		// Validation.
-		add_filter( 'wc_mnm_add_to_cart_container_validation', array( __CLASS__, 'weight_validation' ), 10, 3 );
-		add_filter( 'wc_mnm_cart_container_validation', array( __CLASS__, 'weight_validation' ), 10, 3 );
-		add_filter( 'wc_mnm_add_to_order_container_validation', array( __CLASS__, 'weight_validation' ), 10, 3 );
+		add_filter( 'wc_mnm_add_to_cart_container_validation', array( __CLASS__, 'validate' ), 10, 3 );
+		add_filter( 'wc_mnm_add_to_order_container_validation', array( __CLASS__, 'validate' ), 10, 3 );
 
     }
 
@@ -226,14 +225,14 @@ class WC_MNM_Weight {
 	/*-----------------------------------------------------------------------------------*/
 
 	/**
-	 * Add the min/max attribute
+	 * Add the weight attribute
 	 *
 	 * @param WC_MNM_Child_Item $child_item
 	 * @param WC_Product_Mix_and_Match
 	 */
 	public static function display_weight( $child_item, $parent_product ) {
 
-		if ( self::validate_by_weight( $parent_product ) ) {
+		if ( self::is_weight_validation_mode( $parent_product ) ) {
 			$child_product = $child_item->get_product();
 			if ( $child_product && $child_product->has_weight() ) {
 				printf( '<p class="product-weight" data-mnm-id="%d" data-weight="%s">%s</p>', esc_attr( $child_product->get_id() ), esc_attr( $child_product->get_weight() ), wc_format_weight( $child_product->get_weight() ) );
@@ -255,9 +254,9 @@ class WC_MNM_Weight {
 	 * @param obj WC_Mix_and_Match_Stock_Manager $mnm_stock
 	 * @return  bool 
 	 */
-	public static function weight_validation( $valid, $product, $mnm_stock ) {
+	public static function validate( $valid, $product, $mnm_stock ) {
 
-		if ( self::validate_by_weight( $product ) ) {		
+		if ( self::is_weight_validation_mode( $product ) ) {		
 
 			$managed_items = $mnm_stock->get_managed_items();
 
@@ -348,10 +347,10 @@ class WC_MNM_Weight {
 	 */
 	public static function add_data_attributes( $params, $product ) {
 
-		if( self::validate_by_weight( $product ) ) {
+		if( self::is_weight_validation_mode( $product ) ) {
 
 			$new_params = array(
-				'validation_mode'       => $product->get_meta( '_mnm_validation_mode', true ),
+				'validation_mode'       => 'weight',
 			    'min_weight'            => $product->get_meta( '_mnm_min_container_weight', true ),
 				'max_weight'			=> $product->get_meta( '_mnm_max_container_weight', true ),
 			);
@@ -382,7 +381,7 @@ class WC_MNM_Weight {
 	 * @param  WC_Product
 	 * @return bool
 	 */
-	public static function validate_by_weight( $product ) {
+	public static function is_weight_validation_mode( $product ) {
 		return 'weight' === $product->get_meta( '_mnm_validation_mode', true );
 	}
 
@@ -395,6 +394,47 @@ class WC_MNM_Weight {
 	 */
 	public static function get_validation_options() {
 		return array_unique( (array) apply_filters( 'wc_mnm_validation_options', array() ) );
+	}
+
+
+	/*-----------------------------------------------------------------------------------*/
+	/* Deprecated                                                                        */
+	/*-----------------------------------------------------------------------------------*/
+
+	/**
+	 * Does this product validate by weight.
+	 * 
+	 * @deprecated 2.0.0
+	 * 
+	 * @param  WC_Product
+	 * @return bool
+	 */
+	public static function validate_by_weight( $product ) {
+		wc_deprecated_function( 'WC_MNM_Weight::validate_by_weight', '2.0.0', 'See: WC_MNM_Weight::is_weight_validation_mode() instead.' );
+		return self::is_weight_validation_mode( $product );
+	}
+
+	/**
+	 * Server-side weight validation
+	 * 
+	 * @deprecated 2.0.0
+	 * 
+	 * @param bool $is_valid
+	 * @param obj WC_Product_Mix_and_Match $product
+	 * @param obj WC_Mix_and_Match_Stock_Manager $mnm_stock
+	 * @return  bool|WP_Error 
+	 */
+	public static function weight_validation( $valid, $product, $mnm_stock ) {
+
+		wc_deprecated_function( 'WC_MNM_Weight::weight_validation', '2.0.0', 'See: WC_MNM_Weight::validate instead.' );
+
+		$is_valid = self::validate( $product, $mnm_stock );
+
+		if ( is_wp_error( $is_valid ) ) {
+			$is_valid = false;
+		}
+		
+		return $is_valid;
 	}
 
 } // End class: do not remove or there will be no more guacamole for you
