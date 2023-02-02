@@ -12,9 +12,10 @@
  * Domain Path: /languages
  * 
  * GitHub Plugin URI: https://github.com/kathyisawesome/wc-mnm-weight
+ * Primary Branch: trunk
  * Release Asset: true
- *
- * Copyright: © 2020 Kathy Darling
+ * 
+ * Copyright: © 2020 - 2023 Kathy Darling
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
  */
