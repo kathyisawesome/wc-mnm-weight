@@ -71,6 +71,7 @@
 				var min_weight     = 'undefined' !== typeof container.$mnm_cart.data( 'min_weight' )   ? wc_mnm_number_round( container.$mnm_cart.data( 'min_weight' ), precision )   : 0;
 				var max_weight     = 'undefined' !== typeof container.$mnm_cart.data( 'max_weight' )   ? wc_mnm_number_round( container.$mnm_cart.data( 'max_weight' ), precision )   : 0;
 				var status_message = self.selected_weight_message(total_weight); // "Selected 99kg".
+				var error_message  = '';
 				var valid_message  = '';
 
 				// Validation.
