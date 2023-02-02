@@ -585,7 +585,8 @@ class WC_MNM_Weight {
 	 * @return bool
 	 */
 	public static function is_weight_validation_mode( $product ) {
-		return 'weight' === $product->get_meta( '_mnm_validation_mode', true );
+		return $product && 'weight' === $product->get_meta( '_mnm_validation_mode', true );
+	}
 
 	/**
 	 * Does this product validate by weight.
