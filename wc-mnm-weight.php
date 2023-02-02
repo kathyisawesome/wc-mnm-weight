@@ -70,6 +70,7 @@ class WC_MNM_Weight {
 
 		// Register Scripts.
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'register_scripts' ) );
+		add_filter( 'wc_mnm_add_to_cart_script_parameters', array( __CLASS__, 'script_params' ) );
 		add_filter( 'wc_mnm_container_data_attributes', array( __CLASS__, 'add_data_attributes' ), 10, 2 );
 
 		// Display Scripts.
@@ -439,8 +440,6 @@ class WC_MNM_Weight {
 
 	/**
 	 * Register scripts
-	 *
-	 * @return void
 	 */
 	public static function register_scripts() {
 
@@ -448,40 +447,56 @@ class WC_MNM_Weight {
 
 		wp_register_script( 'wc-add-to-cart-mnm-weight-validation', plugins_url( '/assets/js/frontend/wc-add-to-cart-mnm-weight-validation' .  $suffix . '.js', __FILE__ ), array( 'wc-add-to-cart-mnm' ), time(), true );
 
-		$locale = localeconv();
+	}
 
-		$params = apply_filters( 'wc_mnm_weight_add_to_cart_parameters', array(
-			'weight_unit'            => get_option( 'woocommerce_weight_unit' ),
-			'num_decimals'           => absint( wc_get_price_decimals() ),
-			'rounding_precision'     => absint( wc_get_rounding_precision() ),
-			'decimal_sep'            => $locale['decimal_point'],
-			'trim_zeros'             => false === apply_filters( 'woocommerce_price_trim_zeros', true ) ? 'no' : 'yes',
-			
-			// translators: %w is current selected weight. %u is the unit of weight, ie: kg.
-			'i18n_weight_format'     => esc_html_x( '%w %u', 'Weight followed by weight unit', 'wc-mnm-weight' ),
-			
-			// translators: %s is the formatted weight, ie: 10kg.
-			'i18n_total'             => __( '<span class="total">Total Weight:</span> %s', 'wc-mnm-weight' ),
-			'decimal_sep'            => $locale['decimal_point'],
 
-			// translators: %s is current selected weight
-			'i18n_qty_message'       => __( 'You have selected %s. ', 'wc-mnm-weight' ),
+	/**
+	 * Localize script params.
+	 * 
+	 * @since 2.0.0
+	 * @param array $params
+	 * @return array
+	 */
+	public static function script_params( $params ) {
 
-			// translators: %v is the error message. %s is weight left to be selected.
-			'i18n_qty_error'         => __( '%vPlease select %s to continue&hellip;', 'wc-mnm-weight' ),
+		$params = array_merge( $params, array(
 
-			// translators: %v is the error message. %min is the script placeholder for formatted min weight. %max is script placeholder for formatted max weight.
-			'i18n_min_max_qty_error' => __( '%vPlease choose between %min and %max to continue&hellip;', 'wc-mnm-weight' ),
+			// Store unit of weight.
+			'weight_unit'                     => get_option( 'woocommerce_weight_unit' ),
+		
+			// translators:  %w is current selected weight. %u is the unit of weight, ie: kg.
+			'i18n_weight_format'              => esc_html_x( '%w %u', 'Weight followed by weight unit', '[Frontend]', 'wc-mnm-weight' ),
+
+			// translators:  %s is current selected weight
+			'i18n_weight_qty_message'         => esc_html_x( 'You have selected %s.', '[Frontend]', 'wc-mnm-weight' ),
+
+			// translators:  %v is the error message. %s is weight left to be selected.
+			'i18n_weight_qty_error'           => esc_html_x( '%v Please select %s to continue&hellip;', '[Frontend]', 'wc-mnm-weight' ),
+
+			// translators:  %v is the error message. %min is the script placeholder for formatted min weight. %max is script placeholder for formatted max weight.
+			'i18n_weight_min_max_qty_error'   => esc_html_x( '%v Please choose between %min and %max to continue&hellip;', '[Frontend]', 'wc-mnm-weight' ),
 			
-			// translators: %v is the error message. %min is the script placeholder for formatted min weight. %max is script placeholder for formatted max weight.
-			'i18n_min_qty_error'     => __( '%vPlease choose at least %min to continue&hellip;', 'wc-mnm-weight' ),
+			// translators:  %v is the error message. %min is the script placeholder for formatted min weight. %min is script placeholder for formatted min weight.
+			'i18n_weight_min_qty_error'       => esc_html_x( '%v Please choose at least %min to continue&hellip;', '[Frontend]', 'wc-mnm-weight' ),
 			
-			// translators: %v is the error message. %min is the script placeholder for formatted min weight. %max is script placeholder for formatted max weight.
-			'i18n_max_qty_error'     => __( '%vPlease choose fewer than %max to continue&hellip;', 'wc-mnm-weight' ),
+			// translators:  %v is the error message. %min is the script placeholder for formatted min weight. %max is script placeholder for formatted max weight.
+			'i18n_weight_max_qty_error'       => esc_html_x( '%v Please choose less than %max to continue&hellip;', '[Frontend]', 'wc-mnm-weight' ),
+
+			// translators:  %v is the current status message.
+			'i18n_weight_valid_fixed_message' => esc_html_x( '%v Add to cart to continue&hellip;', '[Frontend]', 'wc-mnm-weight' ),
+
+			// translators:  %v is the current status message.
+			'i18n_weight_valid_min_message'   => esc_html_x( '%v You can select more or add to cart to continue&hellip;', '[Frontend]', 'wc-mnm-weight' ),
+
+			// translators:  %v is the current status message. %max is the container maximum.
+			'i18n_weight_valid_max_message'   => esc_html_x( '%v You can select up to %max or add to cart to continue&hellip;', '[Frontend]', 'wc-mnm-weight' ),
+
+			// translators:  %v is the current status message. %min is the container minimum. %max is the container maximum.
+			'i18n_weight_valid_range_message' => esc_html_x( '%v You may select between %min and %max items or add to cart to continue&hellip;', '[Frontend]', 'wc-mnm-weight' ),
 
 		) );
 
-		wp_localize_script( 'wc-add-to-cart-mnm-weight-validation', 'wc_mnm_weight_params', $params );
+		return $params;
 
 	}
 

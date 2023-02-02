@@ -1,4 +1,4 @@
-/* global wc_mnm_weight_params */
+/* global wc_mnm_params */
 
 ( function( $ ) {
 
@@ -76,7 +76,7 @@
 
 			container.reset_messages();
 
-			var precision = wc_mnm_weight_params.rounding_precision;
+			var precision      = wc_mnm_params.rounding_precision;
 			var total_weight = container.$mnm_cart.data( 'total_weight' );
 			var min_weight = container.$mnm_cart.data( 'min_weight' );
 			var max_weight = container.$mnm_cart.data( 'max_weight' );
@@ -88,18 +88,18 @@
 
 			// Validation.
 			if( min_weight === max_weight && total_weight !== min_weight ) {
-				error_message = wc_mnm_weight_params.i18n_qty_error.replace( '%s', self.get_formatted_weight( min_weight ) );
+				error_message = wc_mnm_params.i18n_weight_qty_error.replace( '%s', self.get_formatted_weight( min_weight ) );
 			}
 			// Validate a range.
 			else if( max_weight > 0 && min_weight > 0 && ( total_weight < min_weight || total_weight > max_weight ) ) {
-				error_message = wc_mnm_weight_params.i18n_min_max_qty_error.replace( '%max', self.get_formatted_weight( max_weight ) ).replace( '%min', self.get_formatted_weight( min_weight ) );
+				error_message = wc_mnm_params.i18n_weight_min_max_qty_error.replace( '%max', self.get_formatted_weight( max_weight ) ).replace( '%min', self.get_formatted_weight( min_weight ) );
 			}
 			// Validate that a container has minimum weight.
 			else if( min_weight > 0 && total_weight < min_weight ) {
-				error_message = wc_mnm_weight_params.i18n_min_weight_error.replace( '%min', self.get_formatted_weight( min_weight ) );
+				error_message = wc_mnm_params.i18n_weight_min_weight_error.replace( '%min', self.get_formatted_weight( min_weight ) );
 			// Validate that a container has less than the maximum weight.
 			} else if ( max_weight > 0 && total_weight > max_weight ) {
-				error_message = wc_mnm_weight_params.i18n_max_weight_error.replace( '%max', self.get_formatted_weight( max_weight ) );
+				error_message = wc_mnm_params.i18n_weight_max_weight_error.replace( '%max', self.get_formatted_weight( max_weight ) );
 			}
 
 			// Add error message.
@@ -123,8 +123,7 @@
 		this.get_formatted_weight = function( weight ) {
 			//var localized_weight = String( weight ).replace( '.',  wc_mnm_weight_params.decimal_sep );
 
-			var localized_weight = wc_mnm_price_format( weight, {
-					decimal_sep:     wc_mnm_weight_params.decimal_sep,
+			return wc_mnm_params.i18n_weight_format.replace( '%w', localized_weight ).replace( '%u', unit );
 					num_decimals:    wc_mnm_weight_params.num_decimals,  
 					currency_symbol: '',
 					trim_zeros:      wc_mnm_weight_params.trim_zeros,
@@ -132,15 +131,14 @@
 				} );
 
 			var unit = wc_mnm_weight_params.weight_unit;
-			return wc_mnm_weight_params.i18n_weight_format.replace( '%w', localized_weight ).replace( '%u', unit );
 		};
 
 
 		/**
 		 * Selected total message builder.
 		 */
-		this.selected_weight_message = function( qty ) {
-			return wc_mnm_weight_params.i18n_qty_message.replace( '%s', self.get_formatted_weight( qty ) );
+		this.selected_weight_message = function( weight ) {
+			return wc_mnm_params.i18n_weight_qty_message.replace( '%s', self.get_formatted_weight( weight ) );
 		};
 
 	} // End WC_MNM_Weight.
