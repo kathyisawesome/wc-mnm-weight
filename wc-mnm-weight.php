@@ -32,7 +32,7 @@ class WC_MNM_Weight {
 	/**
 	 * constants
 	 */
-	CONST VERSION = '1.1.0';
+	const VERSION = '1.1.0';
 	const REQ_MNM_VERSION = '2.0.0';
 
 	/**
