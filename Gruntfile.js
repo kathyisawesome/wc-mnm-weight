@@ -1,6 +1,5 @@
 module.exports = function(grunt) {
 
-	const sass = require( 'node-sass' );
 	require( 'load-grunt-tasks' )( grunt );
 
 	// Project configuration.
@@ -15,78 +14,6 @@ module.exports = function(grunt) {
 			js: 'assets/js',
 			php: 'includes',
 			scss: 'assets/scss'
-		},
-
-		// Compile all .scss files.
-		sass: {
-			compile: {
-				options: {
-					implementation: sass
-				},
-				files: [
-				{
-					expand: true,
-					cwd: '<%= dirs.scss %>/admin/',
-					src: ['*.scss'],
-					dest: '<%= dirs.css %>/admin/',
-					ext: '.css'
-				},
-				{
-					expand: true,
-					cwd: '<%= dirs.scss %>/frontend',
-					src: ['*.scss'],
-					dest: '<%= dirs.css %>/frontend',
-					ext: '.css'
-				}
-				]
-			}
-		},
-
-		// Generate RTL .css files.
-		rtlcss: {
-			dist: {
-				expand: true,
-				src: [
-				'<%= dirs.css %>/admin/*.css',
-				'!<%= dirs.css %>/admin/*-rtl.css',
-				'!<%= dirs.css %>/admin/*.min.css',
-				'<%= dirs.css %>/frontend/*.css',
-				'!<%= dirs.css %>/frontend/*-rtl.css',
-				'!<%= dirs.css %>/frontend/*.min.css'
-				],
-				ext: '-rtl.css'
-			}
-		},
-
-		// Minify all .css files.
-		cssmin: {
-			dist: {
-				files: [{
-					expand: true,
-					src: [
-					'<%= dirs.css %>/admin/*.css',
-					'!<%= dirs.css %>/admin/*.min.css',
-					'<%= dirs.css %>/frontend/*.css',
-					'!<%= dirs.css %>/frontend/*.min.css'
-					],
-					ext: '.min.css'
-				}]
-			}
-		},
-
-		// Autoprefixer.
-		postcss: {
-			options: {
-				processors: [
-				require( 'autoprefixer' )
-				]
-			},
-			dist: {
-				src: [
-				'<%= dirs.css %>/admin/*.css',
-				'<%= dirs.css %>/frontend/*.css'
-				]
-			}
 		},
 
 		// Minify .js files.
@@ -150,13 +77,6 @@ module.exports = function(grunt) {
 
 		// Watch changes for assets.
 		watch: {
-			css: {
-				files: [
-				'<%= dirs.scss %>/admin/*.scss',
-				'<%= dirs.scss %>/frontend/*.scss'
-				],
-				tasks: ['sass', 'rtlcss', 'postcss', 'cssmin']
-			},
 			js: {
 				files: [
 				'<%= dirs.js %>/admin/*js',
@@ -219,7 +139,7 @@ module.exports = function(grunt) {
 			main: {
 				options: {
 					mode: 'zip',
-					archive: 'deploy/<%= pkg.version %>/<%= pkg.name %>.zip'
+					archive: 'deploy/<%= pkg.name %>-<%= pkg.version %>.zip'
 				},
 				expand: true,
 				cwd: 'build/',
@@ -315,23 +235,7 @@ module.exports = function(grunt) {
         ]
     );
 
-	grunt.registerTask(
-        'css',
-        [
-		'sass',
-		'rtlcss',
-		'postcss',
-		'cssmin'
-        ]
-    );
-
-	grunt.registerTask(
-        'assets',
-        [
-		'js',
-		'css'
-        ]
-    );
+	grunt.registerTask( 'assets', [ 'js' ] );
 
 	grunt.registerTask(
         'zip',

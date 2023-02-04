@@ -24,6 +24,6 @@
 		"wp": false,
 		"wc_mnm_weight_params": false,
 		"wc_mnm_number_round": false,
-		"wc_mnm_price_format": false
+		"wc_mnm_number_format": false
 	}
 }
