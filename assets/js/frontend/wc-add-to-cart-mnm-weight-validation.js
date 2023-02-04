@@ -30,6 +30,27 @@
 		};
 
 		/**
+		 * Get Max Weight.
+		 */
+		this.get_max_container_weight = function() {
+			return 'undefined' !== typeof container.$mnm_cart.data( 'max_weight' )   ? wc_mnm_number_round( container.$mnm_cart.data( 'max_weight' ), wc_mnm_params.rounding_precision )   : '';
+		}
+
+		/**
+		 * Get Min Weight.
+		 */
+		this.get_min_container_weight = function() {
+			return 'undefined' !== typeof container.$mnm_cart.data( 'min_weight' )   ? wc_mnm_number_round( container.$mnm_cart.data( 'min_weight' ), wc_mnm_params.rounding_precision )   : 0;
+		}
+
+		/**
+		 * Get Current Weight.
+		 */
+		this.get_container_weight = function() {
+			return 'undefined' !== typeof container.$mnm_cart.data( 'total_weight' ) ? wc_mnm_number_round( container.$mnm_cart.data( 'total_weight' ), wc_mnm_params.rounding_precision ) : 0;
+		}
+
+		/**
 		 * Update Totals.
 		 */
 		this.update_totals = function( event, container ) {
@@ -77,9 +98,9 @@
 				container.reset_messages();
 
 				var precision      = wc_mnm_params.rounding_precision;
-				var total_weight   = 'undefined' !== typeof container.$mnm_cart.data( 'total_weight' ) ? wc_mnm_number_round( container.$mnm_cart.data( 'total_weight' ), precision ) : 0;
-				var min_weight     = 'undefined' !== typeof container.$mnm_cart.data( 'min_weight' )   ? wc_mnm_number_round( container.$mnm_cart.data( 'min_weight' ), precision )   : 0;
-				var max_weight     = 'undefined' !== typeof container.$mnm_cart.data( 'max_weight' )   ? wc_mnm_number_round( container.$mnm_cart.data( 'max_weight' ), precision )   : 0;
+				var total_weight   = self.get_container_weight();
+				var min_weight     = self.get_min_container_weight();
+				var max_weight     = self.get_max_container_weight();
 				var status_message = self.selected_weight_message(total_weight); // "Selected 99kg".
 				var error_message  = '';
 				var valid_message  = '';
