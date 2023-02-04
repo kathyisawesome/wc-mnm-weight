@@ -44,21 +44,21 @@
 		 */
 		this.get_max_container_weight = function() {
 			return 'undefined' !== typeof container.$mnm_cart.data( 'max_weight' )   ? wc_mnm_number_round( container.$mnm_cart.data( 'max_weight' ), wc_mnm_params.rounding_precision )   : '';
-		}
+		};
 
 		/**
 		 * Get Min Weight.
 		 */
 		this.get_min_container_weight = function() {
 			return 'undefined' !== typeof container.$mnm_cart.data( 'min_weight' )   ? wc_mnm_number_round( container.$mnm_cart.data( 'min_weight' ), wc_mnm_params.rounding_precision )   : 0;
-		}
+		};
 
 		/**
 		 * Get Current Weight.
 		 */
 		this.get_container_weight = function() {
 			return 'undefined' !== typeof container.$mnm_cart.data( 'total_weight' ) ? wc_mnm_number_round( container.$mnm_cart.data( 'total_weight' ), wc_mnm_params.rounding_precision ) : 0;
-		}
+		};
 
 		/**
 		 * Update Totals.
@@ -107,7 +107,6 @@
 				// Reset validation errors.
 				container.reset_messages();
 
-				var precision      = wc_mnm_params.rounding_precision;
 				var total_weight   = self.get_container_weight();
 				var min_weight     = self.get_min_container_weight();
 				var max_weight     = self.get_max_container_weight();
@@ -195,7 +194,7 @@
 		
 			// Restrict to max limits.
 			var max              = parseFloat(child_item.$mnm_item_qty.attr('max'));
-			var max_weight       = self.get_max_container_weight();;
+			var max_weight       = self.get_max_container_weight();
 			var container_weight = self.get_container_weight();
 			var potential_weight = container_weight + (current_weight - prev_weight);
 			var remaining_weight = max_weight - container_weight;
