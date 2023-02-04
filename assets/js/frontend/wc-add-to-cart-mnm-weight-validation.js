@@ -27,6 +27,16 @@
 		this.bind_event_handlers = function() {
 			this.$form.on( 'wc-mnm-container-quantities-updated', this.update_totals );
 			this.$form.on( 'wc-mnm-validation',                   this.validate );
+
+			// Add the child item handlers.
+			if ( container.child_items.length ) {
+
+				container.child_items.forEach(function(child_item) {
+					child_item.$self.on( 'wc-mnm-child-item-valid-quantity', self.validate_child );
+				});
+				  
+			}
+
 		};
 
 		/**
@@ -165,6 +175,60 @@
 			}
 
 		};
+
+		/**
+		 * Validate child item quantity.
+		 */
+		this.validate_child = function( event, child_item, new_qty, current_qty, prev_qty ) {
+
+			// Get this item's weight.
+			var item_weight = child_item.$self.find( '.product-weight' ).data( 'weight' );
+
+			if( 'undefined' === typeof item_weight ) { 
+				item_weight = 0;
+			}
+
+			item_weight          = parseFloat( item_weight );
+
+			var prev_weight      = prev_qty * item_weight;
+			var current_weight   = current_qty * item_weight;
+		
+			// Restrict to max limits.
+			var max              = parseFloat(child_item.$mnm_item_qty.attr('max'));
+			var max_weight       = self.get_max_container_weight();;
+			var container_weight = self.get_container_weight();
+			var potential_weight = container_weight + (current_weight - prev_weight);
+			var remaining_weight = max_weight - container_weight;
+
+			// Prevent over-filling container.
+			if ( max_weight > 0 && potential_weight > max_weight ) {
+
+				// Clear existing errors.
+				child_item.reset_messages();
+
+				// Space left to fill if item will fit in remaining space.
+				if ( container_weight < max_weight && item_weight < remaining_weight ) {
+	
+					new_qty = Math.min( Math.floor(remaining_weight/item_weight), max);
+
+					// No space left in container, or item is too heavy to fit in remaining space, reset to previous.
+				} else {
+					new_qty = prev_qty;
+				}
+
+				// If the new quantity is the individual max, re-use the item-specific error message.
+				if (max === new_qty) {
+					child_item.add_message(wc_mnm_params.i18n_child_item_max_qty_message.replace('%d', max));
+				} else {
+					child_item.add_message(wc_mnm_params.i18n_child_item_max_container_qty_message.replace('%d', self.get_formatted_weight(max_weight)));
+				}
+					
+			}
+
+			return new_qty;
+
+		};
+
 
 		/**
 		 * Build the weight html component.
