@@ -31,7 +31,7 @@ class WC_MNM_Weight {
 	 * constants
 	 */
 	const VERSION = '2.0.0-beta.1';
-	const REQ_MNM_VERSION = '2.4.0-beta.3';
+	const REQ_MNM_VERSION = '2.4.0';
 
 	/**
 	 * WC_MNM_Weight Constructor
