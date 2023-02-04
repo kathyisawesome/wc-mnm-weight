@@ -26,6 +26,11 @@ Experimental mini-extension for [WooCommerce Mix and Match Products](https://woo
 2. Please test thoroughly before using in production.
 3. Requires Mix and Match 2.4.0+
 
+### Known Limitations
+1. Min/Max container prices are still calculated by the core plugin as a function of _stock_ limitations, so that From price may not be what you'd expect by weight limitations.
+2. Unsure handling of weight rounding. Will definitely work better with whole numbers or weight that will not require rounding on calculations, ex: 1kg, .5kg, .25kg.
+3. You are responsible for making sure the container _can_ be filled at the weight restrictions set. Ie: a .5kg fixed container cannot be correctly filled if all items are .333kg.
+
 ### Automatic plugin updates
 
 Plugin updates can be enabled by installing the [Git Updater](https://git-updater.com/) plugin.
